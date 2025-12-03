@@ -7,9 +7,13 @@ import { UserRole } from "../utils/customTypes";
 
 const prisma = new PrismaClient();
 
-// register a new user with role
+// constants for account locking
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCK_DURATION_MINUTES = 30;
+
+// register new user with role
 export const registerUser = async (email: string, password: string, role: UserRole = "USER") => {
-    // hash the password
+    // hash password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // save to database with role
@@ -52,11 +56,68 @@ export const loginUser = async (email: string, password: string) => {
         throw new Error("user not found");
     }
 
+    // check if account is locked
+    if (user.accountLockedUntil) {
+        const now = new Date();
+        if (user.accountLockedUntil > now) {
+            const error: any = new Error("account is locked due to multiple failed login attempts");
+            error.lockedUntil = user.accountLockedUntil;
+            throw error;
+        } else {
+            // lock expired, reset attempts
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    failedLoginAttempts: 0,
+                    accountLockedUntil: null,
+                },
+            });
+        }
+    }
+
     // compare passwords
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
-        throw new Error("invalid password");
+        // increment failed attempts
+        const newAttempts = user.failedLoginAttempts + 1;
+        
+        // check if should lock account
+        if (newAttempts >= MAX_FAILED_ATTEMPTS) {
+            const lockUntil = new Date();
+            lockUntil.setMinutes(lockUntil.getMinutes() + LOCK_DURATION_MINUTES);
+            
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    failedLoginAttempts: newAttempts,
+                    accountLockedUntil: lockUntil,
+                },
+            });
+            
+            const error: any = new Error("account locked due to multiple failed login attempts");
+            error.lockedUntil = lockUntil;
+            throw error;
+        } else {
+            // just increment attempts
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    failedLoginAttempts: newAttempts,
+                },
+            });
+            
+            throw new Error("invalid password");
+        }
     }
+
+    // successful login - reset failed attempts
+    await prisma.user.update({
+        where: { id: user.id },
+        data: {
+            failedLoginAttempts: 0,
+            accountLockedUntil: null,
+        },
+    });
 
     // generate tokens with role
     const accessToken = signAccessToken(user.id, user.role);
@@ -127,7 +188,6 @@ export const rotateRefreshToken = async (oldToken: string) => {
 
 // logout user by deleting refresh token(s)
 export const logoutUser = async (token?: string, userId?: number) => {
-    // if token provided, delete that token, else delete all tokens for userId
     if (token) {
         await deleteRefreshToken(token);
     } else if (userId) {
@@ -157,6 +217,8 @@ export const getAllUsers = async () => {
             id: true,
             email: true,
             role: true,
+            failedLoginAttempts: true,
+            accountLockedUntil: true,
             createdAt: true,
             updatedAt: true,
         },

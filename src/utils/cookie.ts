@@ -4,7 +4,6 @@ import { Response } from "express";
 const COOKIE_NAME = process.env.REFRESH_COOKIE_NAME || "jid";
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-// set refresh token cookie on response
 export const setRefreshTokenCookie = (res: Response, token: string, expiresAt: Date) => {
     // secure only in production
     const secure = NODE_ENV === "production";

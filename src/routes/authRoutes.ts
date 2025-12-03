@@ -3,12 +3,13 @@ import { signUp, login, getUserById, refresh, logout, getProfile, listAllUsers, 
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
 import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
+import { loginRateLimiter } from "../middlewares/loginRateLimiter";
 
 const router = Router();
 
 // public routes
 router.post("/register", validate(registerSchema), signUp);
-router.post("/login", validate(loginSchema), login);
+router.post("/login", loginRateLimiter, validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 

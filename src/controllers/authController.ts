@@ -38,11 +38,11 @@ export const signUp = async (req: Request, res: Response) => {
                 role: user.role,
             }
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Signup error:", error);
-        return res.status(500).json({ 
+        return res.status(400).json({ 
             message: "Registration failed", 
-            error: error instanceof Error ? error.message : "Unknown error" 
+            error: error?.message || "Unknown error" 
         });
     }
 };
@@ -58,7 +58,7 @@ export const login = async (req: Request, res: Response) => {
         const expiresAt = getRefreshTokenExpiryDate();
         setRefreshTokenCookie(res, refreshToken, expiresAt);
 
-        // return access token and user data with role
+        // return tokens and user info with role
         return res.status(200).json({
             message: "login successful",
             accessToken,
@@ -68,10 +68,20 @@ export const login = async (req: Request, res: Response) => {
                 role: user.role,
             },
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Login error:", error);
+        
+        // handle account locked error
+        if (error.lockedUntil) {
+            return res.status(423).json({ 
+                message: "Account locked",
+                error: "account is locked due to multiple failed login attempts",
+                lockedUntil: error.lockedUntil
+            });
+        }
+        
         const message = error instanceof Error ? error.message : "Unknown error";
-        return res.status(400).json({ message: "Login failed", error: message });
+        return res.status(401).json({ message: "Login failed", error: message });
     }
 };
 
@@ -123,7 +133,7 @@ export const logout = async (req: Request, res: Response) => {
     }
 };
 
-// get user by id (authenticated users)
+// get user by id (admin or authenticated user)
 export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     try {
         // get user id from request parameters
@@ -149,7 +159,7 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     }
 };
 
-// get current user profile
+// get current user's profile
 export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     try {
         if (!req.user) {
