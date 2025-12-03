@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { signUp, login, getUserById, refresh, logout } from "../controllers/authController";
-import { authenticate } from "../middlewares/authMiddleware";
+import { signUp, login, getUserById, refresh, logout, getProfile, listAllUsers, changeUserRole } from "../controllers/authController";
+import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
-import { loginSchema, registerSchema } from "../validators/authValidators";
+import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
 
 const router = Router();
 
@@ -12,7 +12,12 @@ router.post("/login", validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 
-// protected route 
-router.get("/:id", authenticate, getUserById);
+// protected routes (any authenticated user)
+router.get("/profile", authenticate, getProfile);
+router.get("/user/:id", authenticate, getUserById);
+
+// admin-only routes
+router.get("/admin/users", authenticate, requireAdmin, listAllUsers);
+router.patch("/admin/change-role", authenticate, requireAdmin, validate(updateRoleSchema), changeUserRole);
 
 export default router;
