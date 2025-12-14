@@ -19,11 +19,12 @@ app.use(express.json());
 app.use('/email', emailRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'email service is running' });
+  res.send('Email Service is running');
 });
 
 const PORT = process.env.EMAIL_SERVICE_PORT || 8001;
+const HOST = process.env.HOST || 'localhost';
 
 app.listen(PORT, () => {
-  console.log(`email service running on port ${PORT}`);
+  console.log(`email service running at http://${HOST}:${PORT}`);
 });
