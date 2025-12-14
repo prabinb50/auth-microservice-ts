@@ -1212,17 +1212,15 @@ export namespace Prisma {
   }
 
   export type UserAvgAggregateOutputType = {
-    id: number | null
     failedLoginAttempts: number | null
   }
 
   export type UserSumAggregateOutputType = {
-    id: number | null
     failedLoginAttempts: number | null
   }
 
   export type UserMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     email: string | null
     password: string | null
     role: $Enums.Role | null
@@ -1234,7 +1232,7 @@ export namespace Prisma {
   }
 
   export type UserMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     email: string | null
     password: string | null
     role: $Enums.Role | null
@@ -1260,12 +1258,10 @@ export namespace Prisma {
 
 
   export type UserAvgAggregateInputType = {
-    id?: true
     failedLoginAttempts?: true
   }
 
   export type UserSumAggregateInputType = {
-    id?: true
     failedLoginAttempts?: true
   }
 
@@ -1393,7 +1389,7 @@ export namespace Prisma {
   }
 
   export type UserGroupByOutputType = {
-    id: number
+    id: string
     email: string
     password: string
     role: $Enums.Role
@@ -1493,7 +1489,7 @@ export namespace Prisma {
       passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       email: string
       password: string
       role: $Enums.Role
@@ -1928,7 +1924,7 @@ export namespace Prisma {
    * Fields of the User model
    */
   interface UserFieldRefs {
-    readonly id: FieldRef<"User", 'Int'>
+    readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
@@ -2421,34 +2417,22 @@ export namespace Prisma {
 
   export type AggregateRefreshToken = {
     _count: RefreshTokenCountAggregateOutputType | null
-    _avg: RefreshTokenAvgAggregateOutputType | null
-    _sum: RefreshTokenSumAggregateOutputType | null
     _min: RefreshTokenMinAggregateOutputType | null
     _max: RefreshTokenMaxAggregateOutputType | null
   }
 
-  export type RefreshTokenAvgAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
-  export type RefreshTokenSumAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
   export type RefreshTokenMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
 
   export type RefreshTokenMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
@@ -2462,16 +2446,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type RefreshTokenAvgAggregateInputType = {
-    id?: true
-    userId?: true
-  }
-
-  export type RefreshTokenSumAggregateInputType = {
-    id?: true
-    userId?: true
-  }
 
   export type RefreshTokenMinAggregateInputType = {
     id?: true
@@ -2536,18 +2510,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: RefreshTokenAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: RefreshTokenSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: RefreshTokenMinAggregateInputType
@@ -2578,21 +2540,17 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: RefreshTokenCountAggregateInputType | true
-    _avg?: RefreshTokenAvgAggregateInputType
-    _sum?: RefreshTokenSumAggregateInputType
     _min?: RefreshTokenMinAggregateInputType
     _max?: RefreshTokenMaxAggregateInputType
   }
 
   export type RefreshTokenGroupByOutputType = {
-    id: number
+    id: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date
     createdAt: Date
     _count: RefreshTokenCountAggregateOutputType | null
-    _avg: RefreshTokenAvgAggregateOutputType | null
-    _sum: RefreshTokenSumAggregateOutputType | null
     _min: RefreshTokenMinAggregateOutputType | null
     _max: RefreshTokenMaxAggregateOutputType | null
   }
@@ -2663,9 +2621,9 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       token: string
-      userId: number
+      userId: string
       expiresAt: Date
       createdAt: Date
     }, ExtArgs["result"]["refreshToken"]>
@@ -3092,9 +3050,9 @@ export namespace Prisma {
    * Fields of the RefreshToken model
    */
   interface RefreshTokenFieldRefs {
-    readonly id: FieldRef<"RefreshToken", 'Int'>
+    readonly id: FieldRef<"RefreshToken", 'String'>
     readonly token: FieldRef<"RefreshToken", 'String'>
-    readonly userId: FieldRef<"RefreshToken", 'Int'>
+    readonly userId: FieldRef<"RefreshToken", 'String'>
     readonly expiresAt: FieldRef<"RefreshToken", 'DateTime'>
     readonly createdAt: FieldRef<"RefreshToken", 'DateTime'>
   }
@@ -3517,34 +3475,22 @@ export namespace Prisma {
 
   export type AggregateVerificationToken = {
     _count: VerificationTokenCountAggregateOutputType | null
-    _avg: VerificationTokenAvgAggregateOutputType | null
-    _sum: VerificationTokenSumAggregateOutputType | null
     _min: VerificationTokenMinAggregateOutputType | null
     _max: VerificationTokenMaxAggregateOutputType | null
   }
 
-  export type VerificationTokenAvgAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
-  export type VerificationTokenSumAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
   export type VerificationTokenMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
 
   export type VerificationTokenMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
@@ -3558,16 +3504,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type VerificationTokenAvgAggregateInputType = {
-    id?: true
-    userId?: true
-  }
-
-  export type VerificationTokenSumAggregateInputType = {
-    id?: true
-    userId?: true
-  }
 
   export type VerificationTokenMinAggregateInputType = {
     id?: true
@@ -3632,18 +3568,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: VerificationTokenAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: VerificationTokenSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: VerificationTokenMinAggregateInputType
@@ -3674,21 +3598,17 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: VerificationTokenCountAggregateInputType | true
-    _avg?: VerificationTokenAvgAggregateInputType
-    _sum?: VerificationTokenSumAggregateInputType
     _min?: VerificationTokenMinAggregateInputType
     _max?: VerificationTokenMaxAggregateInputType
   }
 
   export type VerificationTokenGroupByOutputType = {
-    id: number
+    id: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date
     createdAt: Date
     _count: VerificationTokenCountAggregateOutputType | null
-    _avg: VerificationTokenAvgAggregateOutputType | null
-    _sum: VerificationTokenSumAggregateOutputType | null
     _min: VerificationTokenMinAggregateOutputType | null
     _max: VerificationTokenMaxAggregateOutputType | null
   }
@@ -3759,9 +3679,9 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       token: string
-      userId: number
+      userId: string
       expiresAt: Date
       createdAt: Date
     }, ExtArgs["result"]["verificationToken"]>
@@ -4188,9 +4108,9 @@ export namespace Prisma {
    * Fields of the VerificationToken model
    */
   interface VerificationTokenFieldRefs {
-    readonly id: FieldRef<"VerificationToken", 'Int'>
+    readonly id: FieldRef<"VerificationToken", 'String'>
     readonly token: FieldRef<"VerificationToken", 'String'>
-    readonly userId: FieldRef<"VerificationToken", 'Int'>
+    readonly userId: FieldRef<"VerificationToken", 'String'>
     readonly expiresAt: FieldRef<"VerificationToken", 'DateTime'>
     readonly createdAt: FieldRef<"VerificationToken", 'DateTime'>
   }
@@ -4613,35 +4533,23 @@ export namespace Prisma {
 
   export type AggregatePasswordResetToken = {
     _count: PasswordResetTokenCountAggregateOutputType | null
-    _avg: PasswordResetTokenAvgAggregateOutputType | null
-    _sum: PasswordResetTokenSumAggregateOutputType | null
     _min: PasswordResetTokenMinAggregateOutputType | null
     _max: PasswordResetTokenMaxAggregateOutputType | null
   }
 
-  export type PasswordResetTokenAvgAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
-  export type PasswordResetTokenSumAggregateOutputType = {
-    id: number | null
-    userId: number | null
-  }
-
   export type PasswordResetTokenMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     used: boolean | null
     createdAt: Date | null
   }
 
   export type PasswordResetTokenMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     token: string | null
-    userId: number | null
+    userId: string | null
     expiresAt: Date | null
     used: boolean | null
     createdAt: Date | null
@@ -4657,16 +4565,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type PasswordResetTokenAvgAggregateInputType = {
-    id?: true
-    userId?: true
-  }
-
-  export type PasswordResetTokenSumAggregateInputType = {
-    id?: true
-    userId?: true
-  }
 
   export type PasswordResetTokenMinAggregateInputType = {
     id?: true
@@ -4734,18 +4632,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: PasswordResetTokenAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PasswordResetTokenSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: PasswordResetTokenMinAggregateInputType
@@ -4776,22 +4662,18 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: PasswordResetTokenCountAggregateInputType | true
-    _avg?: PasswordResetTokenAvgAggregateInputType
-    _sum?: PasswordResetTokenSumAggregateInputType
     _min?: PasswordResetTokenMinAggregateInputType
     _max?: PasswordResetTokenMaxAggregateInputType
   }
 
   export type PasswordResetTokenGroupByOutputType = {
-    id: number
+    id: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date
     used: boolean
     createdAt: Date
     _count: PasswordResetTokenCountAggregateOutputType | null
-    _avg: PasswordResetTokenAvgAggregateOutputType | null
-    _sum: PasswordResetTokenSumAggregateOutputType | null
     _min: PasswordResetTokenMinAggregateOutputType | null
     _max: PasswordResetTokenMaxAggregateOutputType | null
   }
@@ -4866,9 +4748,9 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       token: string
-      userId: number
+      userId: string
       expiresAt: Date
       used: boolean
       createdAt: Date
@@ -5296,9 +5178,9 @@ export namespace Prisma {
    * Fields of the PasswordResetToken model
    */
   interface PasswordResetTokenFieldRefs {
-    readonly id: FieldRef<"PasswordResetToken", 'Int'>
+    readonly id: FieldRef<"PasswordResetToken", 'String'>
     readonly token: FieldRef<"PasswordResetToken", 'String'>
-    readonly userId: FieldRef<"PasswordResetToken", 'Int'>
+    readonly userId: FieldRef<"PasswordResetToken", 'String'>
     readonly expiresAt: FieldRef<"PasswordResetToken", 'DateTime'>
     readonly used: FieldRef<"PasswordResetToken", 'Boolean'>
     readonly createdAt: FieldRef<"PasswordResetToken", 'DateTime'>
@@ -5809,20 +5691,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
@@ -5872,6 +5740,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -5892,7 +5774,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    id?: IntFilter<"User"> | number
+    id?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
@@ -5922,7 +5804,7 @@ export namespace Prisma {
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     email?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
@@ -5960,7 +5842,7 @@ export namespace Prisma {
     AND?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"User"> | number
+    id?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
@@ -5975,9 +5857,9 @@ export namespace Prisma {
     AND?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     OR?: RefreshTokenWhereInput[]
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
-    id?: IntFilter<"RefreshToken"> | number
+    id?: StringFilter<"RefreshToken"> | string
     token?: StringFilter<"RefreshToken"> | string
-    userId?: IntFilter<"RefreshToken"> | number
+    userId?: StringFilter<"RefreshToken"> | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -5993,12 +5875,12 @@ export namespace Prisma {
   }
 
   export type RefreshTokenWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     token?: string
     AND?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     OR?: RefreshTokenWhereInput[]
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
-    userId?: IntFilter<"RefreshToken"> | number
+    userId?: StringFilter<"RefreshToken"> | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6011,19 +5893,17 @@ export namespace Prisma {
     expiresAt?: SortOrder
     createdAt?: SortOrder
     _count?: RefreshTokenCountOrderByAggregateInput
-    _avg?: RefreshTokenAvgOrderByAggregateInput
     _max?: RefreshTokenMaxOrderByAggregateInput
     _min?: RefreshTokenMinOrderByAggregateInput
-    _sum?: RefreshTokenSumOrderByAggregateInput
   }
 
   export type RefreshTokenScalarWhereWithAggregatesInput = {
     AND?: RefreshTokenScalarWhereWithAggregatesInput | RefreshTokenScalarWhereWithAggregatesInput[]
     OR?: RefreshTokenScalarWhereWithAggregatesInput[]
     NOT?: RefreshTokenScalarWhereWithAggregatesInput | RefreshTokenScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"RefreshToken"> | number
+    id?: StringWithAggregatesFilter<"RefreshToken"> | string
     token?: StringWithAggregatesFilter<"RefreshToken"> | string
-    userId?: IntWithAggregatesFilter<"RefreshToken"> | number
+    userId?: StringWithAggregatesFilter<"RefreshToken"> | string
     expiresAt?: DateTimeWithAggregatesFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"RefreshToken"> | Date | string
   }
@@ -6032,9 +5912,9 @@ export namespace Prisma {
     AND?: VerificationTokenWhereInput | VerificationTokenWhereInput[]
     OR?: VerificationTokenWhereInput[]
     NOT?: VerificationTokenWhereInput | VerificationTokenWhereInput[]
-    id?: IntFilter<"VerificationToken"> | number
+    id?: StringFilter<"VerificationToken"> | string
     token?: StringFilter<"VerificationToken"> | string
-    userId?: IntFilter<"VerificationToken"> | number
+    userId?: StringFilter<"VerificationToken"> | string
     expiresAt?: DateTimeFilter<"VerificationToken"> | Date | string
     createdAt?: DateTimeFilter<"VerificationToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6050,12 +5930,12 @@ export namespace Prisma {
   }
 
   export type VerificationTokenWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     token?: string
     AND?: VerificationTokenWhereInput | VerificationTokenWhereInput[]
     OR?: VerificationTokenWhereInput[]
     NOT?: VerificationTokenWhereInput | VerificationTokenWhereInput[]
-    userId?: IntFilter<"VerificationToken"> | number
+    userId?: StringFilter<"VerificationToken"> | string
     expiresAt?: DateTimeFilter<"VerificationToken"> | Date | string
     createdAt?: DateTimeFilter<"VerificationToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6068,19 +5948,17 @@ export namespace Prisma {
     expiresAt?: SortOrder
     createdAt?: SortOrder
     _count?: VerificationTokenCountOrderByAggregateInput
-    _avg?: VerificationTokenAvgOrderByAggregateInput
     _max?: VerificationTokenMaxOrderByAggregateInput
     _min?: VerificationTokenMinOrderByAggregateInput
-    _sum?: VerificationTokenSumOrderByAggregateInput
   }
 
   export type VerificationTokenScalarWhereWithAggregatesInput = {
     AND?: VerificationTokenScalarWhereWithAggregatesInput | VerificationTokenScalarWhereWithAggregatesInput[]
     OR?: VerificationTokenScalarWhereWithAggregatesInput[]
     NOT?: VerificationTokenScalarWhereWithAggregatesInput | VerificationTokenScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"VerificationToken"> | number
+    id?: StringWithAggregatesFilter<"VerificationToken"> | string
     token?: StringWithAggregatesFilter<"VerificationToken"> | string
-    userId?: IntWithAggregatesFilter<"VerificationToken"> | number
+    userId?: StringWithAggregatesFilter<"VerificationToken"> | string
     expiresAt?: DateTimeWithAggregatesFilter<"VerificationToken"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"VerificationToken"> | Date | string
   }
@@ -6089,9 +5967,9 @@ export namespace Prisma {
     AND?: PasswordResetTokenWhereInput | PasswordResetTokenWhereInput[]
     OR?: PasswordResetTokenWhereInput[]
     NOT?: PasswordResetTokenWhereInput | PasswordResetTokenWhereInput[]
-    id?: IntFilter<"PasswordResetToken"> | number
+    id?: StringFilter<"PasswordResetToken"> | string
     token?: StringFilter<"PasswordResetToken"> | string
-    userId?: IntFilter<"PasswordResetToken"> | number
+    userId?: StringFilter<"PasswordResetToken"> | string
     expiresAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
     used?: BoolFilter<"PasswordResetToken"> | boolean
     createdAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
@@ -6109,12 +5987,12 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     token?: string
     AND?: PasswordResetTokenWhereInput | PasswordResetTokenWhereInput[]
     OR?: PasswordResetTokenWhereInput[]
     NOT?: PasswordResetTokenWhereInput | PasswordResetTokenWhereInput[]
-    userId?: IntFilter<"PasswordResetToken"> | number
+    userId?: StringFilter<"PasswordResetToken"> | string
     expiresAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
     used?: BoolFilter<"PasswordResetToken"> | boolean
     createdAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
@@ -6129,25 +6007,24 @@ export namespace Prisma {
     used?: SortOrder
     createdAt?: SortOrder
     _count?: PasswordResetTokenCountOrderByAggregateInput
-    _avg?: PasswordResetTokenAvgOrderByAggregateInput
     _max?: PasswordResetTokenMaxOrderByAggregateInput
     _min?: PasswordResetTokenMinOrderByAggregateInput
-    _sum?: PasswordResetTokenSumOrderByAggregateInput
   }
 
   export type PasswordResetTokenScalarWhereWithAggregatesInput = {
     AND?: PasswordResetTokenScalarWhereWithAggregatesInput | PasswordResetTokenScalarWhereWithAggregatesInput[]
     OR?: PasswordResetTokenScalarWhereWithAggregatesInput[]
     NOT?: PasswordResetTokenScalarWhereWithAggregatesInput | PasswordResetTokenScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"PasswordResetToken"> | number
+    id?: StringWithAggregatesFilter<"PasswordResetToken"> | string
     token?: StringWithAggregatesFilter<"PasswordResetToken"> | string
-    userId?: IntWithAggregatesFilter<"PasswordResetToken"> | number
+    userId?: StringWithAggregatesFilter<"PasswordResetToken"> | string
     expiresAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
     used?: BoolWithAggregatesFilter<"PasswordResetToken"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
   }
 
   export type UserCreateInput = {
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -6162,7 +6039,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedCreateInput = {
-    id?: number
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -6177,6 +6054,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -6191,7 +6069,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -6206,7 +6084,7 @@ export namespace Prisma {
   }
 
   export type UserCreateManyInput = {
-    id?: number
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -6218,6 +6096,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -6229,7 +6108,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -6241,6 +6120,7 @@ export namespace Prisma {
   }
 
   export type RefreshTokenCreateInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
@@ -6248,14 +6128,15 @@ export namespace Prisma {
   }
 
   export type RefreshTokenUncheckedCreateInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type RefreshTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6263,36 +6144,38 @@ export namespace Prisma {
   }
 
   export type RefreshTokenUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenCreateManyInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type RefreshTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenCreateInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
@@ -6300,14 +6183,15 @@ export namespace Prisma {
   }
 
   export type VerificationTokenUncheckedCreateInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type VerificationTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6315,36 +6199,38 @@ export namespace Prisma {
   }
 
   export type VerificationTokenUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenCreateManyInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type VerificationTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PasswordResetTokenCreateInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     used?: boolean
@@ -6353,15 +6239,16 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedCreateInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     used?: boolean
     createdAt?: Date | string
   }
 
   export type PasswordResetTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
@@ -6370,24 +6257,25 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PasswordResetTokenCreateManyInput = {
-    id?: number
+    id?: string
     token: string
-    userId: number
+    userId: string
     expiresAt: Date | string
     used?: boolean
     createdAt?: Date | string
   }
 
   export type PasswordResetTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
@@ -6395,23 +6283,12 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    userId?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -6450,6 +6327,17 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -6511,7 +6399,6 @@ export namespace Prisma {
   }
 
   export type UserAvgOrderByAggregateInput = {
-    id?: SortOrder
     failedLoginAttempts?: SortOrder
   }
 
@@ -6540,24 +6427,7 @@ export namespace Prisma {
   }
 
   export type UserSumOrderByAggregateInput = {
-    id?: SortOrder
     failedLoginAttempts?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6610,6 +6480,22 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -6637,11 +6523,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type RefreshTokenAvgOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
   export type RefreshTokenMaxOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
@@ -6658,22 +6539,12 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type RefreshTokenSumOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
   export type VerificationTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
     userId?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type VerificationTokenAvgOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
   }
 
   export type VerificationTokenMaxOrderByAggregateInput = {
@@ -6692,11 +6563,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type VerificationTokenSumOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-  }
-
   export type PasswordResetTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
@@ -6704,11 +6570,6 @@ export namespace Prisma {
     expiresAt?: SortOrder
     used?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type PasswordResetTokenAvgOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
   }
 
   export type PasswordResetTokenMaxOrderByAggregateInput = {
@@ -6727,11 +6588,6 @@ export namespace Prisma {
     expiresAt?: SortOrder
     used?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type PasswordResetTokenSumOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
   }
 
   export type RefreshTokenCreateNestedManyWithoutUserInput = {
@@ -6930,17 +6786,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, UserUpdateWithoutPasswordResetTokensInput>, UserUncheckedUpdateWithoutPasswordResetTokensInput>
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -6978,6 +6823,17 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -6987,33 +6843,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7065,6 +6894,33 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -7091,13 +6947,14 @@ export namespace Prisma {
   }
 
   export type RefreshTokenCreateWithoutUserInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type RefreshTokenUncheckedCreateWithoutUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
@@ -7114,13 +6971,14 @@ export namespace Prisma {
   }
 
   export type VerificationTokenCreateWithoutUserInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type VerificationTokenUncheckedCreateWithoutUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
@@ -7137,6 +6995,7 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenCreateWithoutUserInput = {
+    id?: string
     token: string
     expiresAt: Date | string
     used?: boolean
@@ -7144,7 +7003,7 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedCreateWithoutUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     used?: boolean
@@ -7181,9 +7040,9 @@ export namespace Prisma {
     AND?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
     OR?: RefreshTokenScalarWhereInput[]
     NOT?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
-    id?: IntFilter<"RefreshToken"> | number
+    id?: StringFilter<"RefreshToken"> | string
     token?: StringFilter<"RefreshToken"> | string
-    userId?: IntFilter<"RefreshToken"> | number
+    userId?: StringFilter<"RefreshToken"> | string
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
   }
@@ -7208,9 +7067,9 @@ export namespace Prisma {
     AND?: VerificationTokenScalarWhereInput | VerificationTokenScalarWhereInput[]
     OR?: VerificationTokenScalarWhereInput[]
     NOT?: VerificationTokenScalarWhereInput | VerificationTokenScalarWhereInput[]
-    id?: IntFilter<"VerificationToken"> | number
+    id?: StringFilter<"VerificationToken"> | string
     token?: StringFilter<"VerificationToken"> | string
-    userId?: IntFilter<"VerificationToken"> | number
+    userId?: StringFilter<"VerificationToken"> | string
     expiresAt?: DateTimeFilter<"VerificationToken"> | Date | string
     createdAt?: DateTimeFilter<"VerificationToken"> | Date | string
   }
@@ -7235,15 +7094,16 @@ export namespace Prisma {
     AND?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
     OR?: PasswordResetTokenScalarWhereInput[]
     NOT?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
-    id?: IntFilter<"PasswordResetToken"> | number
+    id?: StringFilter<"PasswordResetToken"> | string
     token?: StringFilter<"PasswordResetToken"> | string
-    userId?: IntFilter<"PasswordResetToken"> | number
+    userId?: StringFilter<"PasswordResetToken"> | string
     expiresAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
     used?: BoolFilter<"PasswordResetToken"> | boolean
     createdAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
   }
 
   export type UserCreateWithoutRefreshTokensInput = {
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7257,7 +7117,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedCreateWithoutRefreshTokensInput = {
-    id?: number
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7287,6 +7147,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutRefreshTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7300,7 +7161,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutRefreshTokensInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7314,6 +7175,7 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutVerificationTokensInput = {
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7327,7 +7189,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedCreateWithoutVerificationTokensInput = {
-    id?: number
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7357,6 +7219,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutVerificationTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7370,7 +7233,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutVerificationTokensInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7384,6 +7247,7 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutPasswordResetTokensInput = {
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7397,7 +7261,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
-    id?: number
+    id?: string
     email: string
     password: string
     role?: $Enums.Role
@@ -7427,6 +7291,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutPasswordResetTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7440,7 +7305,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
@@ -7454,21 +7319,21 @@ export namespace Prisma {
   }
 
   export type RefreshTokenCreateManyUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type VerificationTokenCreateManyUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     createdAt?: Date | string
   }
 
   export type PasswordResetTokenCreateManyUserInput = {
-    id?: number
+    id?: string
     token: string
     expiresAt: Date | string
     used?: boolean
@@ -7476,46 +7341,49 @@ export namespace Prisma {
   }
 
   export type RefreshTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenUncheckedUpdateManyWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenUncheckedUpdateManyWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PasswordResetTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
@@ -7523,7 +7391,7 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
@@ -7531,7 +7399,7 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenUncheckedUpdateManyWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean

@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 const SALT_ROUNDS = 10;
 
 // send verification email
-export const sendVerificationEmail = async (userId: number, email: string) => {
+export const sendVerificationEmail = async (userId: string, email: string) => {
   // generate token
   const token = generateVerificationToken(userId);
   const expiresAt = getVerificationTokenExpiry();

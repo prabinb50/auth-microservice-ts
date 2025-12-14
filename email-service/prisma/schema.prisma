@@ -14,7 +14,7 @@ enum Role {
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
+  id            String          @id @default(uuid())
   email         String          @unique
   password      String
   role          Role            @default(USER)
@@ -22,6 +22,7 @@ model User {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
+  // account security fields
   failedLoginAttempts Int       @default(0)
   accountLockedUntil  DateTime?
 
@@ -31,29 +32,31 @@ model User {
 }
 
 model RefreshToken {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   token      String    @unique
-  userId     Int
+  userId     String
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
 
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// email verification token
 model VerificationToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   token     String   @unique
-  userId    Int
+  userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// password reset token
 model PasswordResetToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   token     String   @unique
-  userId    Int
+  userId    String
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())

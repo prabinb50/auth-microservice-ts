@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // send verification email schema
 export const sendVerificationSchema = z.object({
-    userId: z.number().int().positive({ message: 'valid user id required' }),
+    userId: z.string().uuid({ message: 'valid user id required' }),
     email: z.string().email({ message: 'invalid email address' }),
 });
 
