@@ -14,13 +14,13 @@ if (!ACCESS_SECRET || !REFRESH_SECRET) {
 }
 
 // generate access token with role
-export const signAccessToken = (userId: number, role: UserRole): string => {
+export const signAccessToken = (userId: string, role: UserRole): string => {
     const payload: TokenPayload = { userId, role };
     return jwt.sign(payload, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES } as SignOptions);
 };
 
 // generate refresh token with role
-export const signRefreshToken = (userId: number, role: UserRole): string => {
+export const signRefreshToken = (userId: string, role: UserRole): string => {
     const payload: TokenPayload = { userId, role };
     return jwt.sign(payload, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRES } as SignOptions);
 };

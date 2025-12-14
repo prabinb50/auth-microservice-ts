@@ -15,6 +15,7 @@ import {
 } from "../services/authServices";
 import { clearRefreshTokenCookie, getRefreshCookieName, setRefreshTokenCookie } from "../utils/cookie";
 import { getRefreshTokenExpiryDate } from "../utils/jwt";
+import { validate as validateUUID } from 'uuid';
 
 // handle user registration
 export const signUp = async (req: Request, res: Response) => {
@@ -146,11 +147,15 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.params.id;
         
-        if (!userId || isNaN(Number(userId))) {
-            return res.status(400).json({ message: "invalid user id" });
+        // validate uuid format using uuid package
+        if (!userId || !validateUUID(userId)) {
+            return res.status(400).json({ 
+                message: "invalid user id format",
+                error: "user id must be a valid uuid"
+            });
         }
 
-        const user = await findUserById(Number(userId));
+        const user = await findUserById(userId);
         if (!user) {
             return res.status(404).json({ message: "user not found with the given id" });
         }
@@ -208,6 +213,15 @@ export const changeUserRole = async (req: AuthenticatedRequest, res: Response) =
     try {
         const { userId, role } = req.body;
 
+        // validate uuid format
+        if (!validateUUID(userId)) {
+            return res.status(400).json({ 
+                message: "invalid user id format",
+                error: "user id must be a valid uuid"
+            });
+        }
+
+        // prevent changing own role
         if (req.user?.userId === userId) {
             return res.status(400).json({ 
                 message: "cannot change your own role" 
@@ -229,13 +243,17 @@ export const changeUserRole = async (req: AuthenticatedRequest, res: Response) =
     }
 };
 
-
 // admin: delete user by id
 export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const userId = Number(req.params.id);
-        if (isNaN(userId)) {
-            return res.status(400).json({ message: "invalid user id" });
+        const userId = req.params.id;
+        
+        // validate uuid format using uuid package
+        if (!userId || !validateUUID(userId)) {
+            return res.status(400).json({ 
+                message: "invalid user id format",
+                error: "user id must be a valid uuid"
+            });
         }
 
         // prevent admin from deleting their own account

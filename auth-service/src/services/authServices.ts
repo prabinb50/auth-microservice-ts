@@ -46,7 +46,7 @@ export const registerUser = async (email: string, password: string, role: UserRo
 };
 
 // find user by id
-export const findUserById = async (id: number) => {
+export const findUserById = async (id: string) => {
     return prisma.user.findUnique({
         where: { id },
         select: {
@@ -213,7 +213,7 @@ export const rotateRefreshToken = async (oldToken: string) => {
 };
 
 // logout user by deleting refresh token(s)
-export const logoutUser = async (token?: string, userId?: number) => {
+export const logoutUser = async (token?: string, userId?: string) => {
     if (token) {
         await deleteRefreshToken(token);
     } else if (userId) {
@@ -222,7 +222,7 @@ export const logoutUser = async (token?: string, userId?: number) => {
 };
 
 // update user role (admin only)
-export const updateUserRole = async (userId: number, newRole: UserRole) => {
+export const updateUserRole = async (userId: string, newRole: UserRole) => {
     const user = await prisma.user.update({
         where: { id: userId },
         data: { role: newRole },
@@ -256,7 +256,7 @@ export const getAllUsers = async () => {
 };
 
 // delete user by id (admin only)
-export const deleteUserById = async (userId: number) => {
+export const deleteUserById = async (userId: string) => {
     // check if user exists
     const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -290,7 +290,7 @@ export const deleteAllNonAdminUsers = async () => {
 };
 
 // delete all users including admins (super admin only)
-export const deleteAllUsers = async (excludeUserId?: number) => {
+export const deleteAllUsers = async (excludeUserId?: string) => {
     // delete all users except the one performing the action
     let result;
     

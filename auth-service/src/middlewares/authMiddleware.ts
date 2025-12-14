@@ -5,11 +5,34 @@ import { verifyAccessToken } from "../utils/jwt";
 // middleware to protect routes
 export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-        // get token from header
-        const token = req.header("Authorization")?.replace("Bearer ", "");
+        // get authorization header
+        const authHeader = req.header("Authorization");
 
+        // check if authorization header exists
+        if (!authHeader) {
+            return res.status(401).json({ 
+                message: "authorization header missing",
+                error: "please provide authorization header in format: Bearer <token>"
+            });
+        }
+
+        // validate bearer prefix (case-insensitive)
+        if (!authHeader.toLowerCase().startsWith("bearer ")) {
+            return res.status(401).json({ 
+                message: "invalid authorization format",
+                error: "authorization header must be in format: Bearer <token>"
+            });
+        }
+
+        // extract token after "bearer " (7 characters)
+        const token = authHeader.substring(7).trim();
+
+        // check if token exists after bearer prefix
         if (!token) {
-            return res.status(401).json({ message: "authorization token missing" });
+            return res.status(401).json({ 
+                message: "access token missing",
+                error: "bearer token cannot be empty"
+            });
         }
 
         try {
@@ -19,14 +42,20 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
             // attach user to request
             req.user = decoded;
 
-            // pass control
+            // pass control to next middleware
             next();
         } catch (error) {
-            return res.status(401).json({ message: "invalid token" });
+            return res.status(401).json({ 
+                message: "invalid or expired token",
+                error: error instanceof Error ? error.message : "token verification failed"
+            });
         }
     } catch (error) {
         console.error("authentication error:", error);
-        return res.status(500).json({ message: "internal server error" });
+        return res.status(500).json({ 
+            message: "internal server error",
+            error: "authentication process failed"
+        });
     }
 };
 
@@ -35,13 +64,17 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
     try {
         // check if user exists (authenticate should run first)
         if (!req.user) {
-            return res.status(401).json({ message: "authentication required" });
+            return res.status(401).json({ 
+                message: "authentication required",
+                error: "user context not found. ensure authenticate middleware runs first"
+            });
         }
 
         // check if user has admin role
         if (req.user.role !== "ADMIN") {
             return res.status(403).json({
-                message: "access denied: admin privileges required"
+                message: "access denied",
+                error: "admin privileges required for this operation"
             });
         }
 
@@ -49,7 +82,10 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
         next();
     } catch (error) {
         console.error("admin check error:", error);
-        return res.status(500).json({ message: "internal server error" });
+        return res.status(500).json({ 
+            message: "internal server error",
+            error: "role verification failed"
+        });
     }
 };
 
@@ -57,20 +93,30 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
 export const requireRole = (allowedRoles: UserRole[]) => {
     return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         try {
+            // check if user exists
             if (!req.user) {
-                return res.status(401).json({ message: "authentication required" });
-            }
-
-            if (!allowedRoles.includes(req.user.role)) {
-                return res.status(403).json({
-                    message: `access denied: requires one of these roles: ${allowedRoles.join(", ")}`
+                return res.status(401).json({ 
+                    message: "authentication required",
+                    error: "user context not found"
                 });
             }
 
+            // check if user has one of the allowed roles
+            if (!allowedRoles.includes(req.user.role)) {
+                return res.status(403).json({
+                    message: "access denied",
+                    error: `requires one of these roles: ${allowedRoles.join(", ")}`
+                });
+            }
+
+            // user has required role, proceed
             next();
         } catch (error) {
             console.error("role check error:", error);
-            return res.status(500).json({ message: "internal server error" });
+            return res.status(500).json({ 
+                message: "internal server error",
+                error: "role verification failed"
+            });
         }
     };
 };

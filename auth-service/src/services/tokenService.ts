@@ -2,7 +2,8 @@ import { PrismaClient } from "../generated/prisma";
 
 const prisma = new PrismaClient();
 
-export const saveRefreshToken = async (userId: number, token: string, expiresAt: Date) => {
+// save refresh token to database
+export const saveRefreshToken = async (userId: string, token: string, expiresAt: Date) => {
   return prisma.refreshToken.create({
     data: {
       userId,
@@ -12,19 +13,22 @@ export const saveRefreshToken = async (userId: number, token: string, expiresAt:
   });
 };
 
+// find refresh token in database
 export const findRefreshToken = async (token: string) => {
   return prisma.refreshToken.findUnique({
     where: { token },
   });
 };
 
+// delete specific refresh token
 export const deleteRefreshToken = async (token: string) => {
   return prisma.refreshToken.deleteMany({
     where: { token },
   });
 };
 
-export const deleteAllUserRefreshTokens = async (userId: number) => {
+// delete all refresh tokens for a user
+export const deleteAllUserRefreshTokens = async (userId: string) => {
   return prisma.refreshToken.deleteMany({
     where: { userId },
   });

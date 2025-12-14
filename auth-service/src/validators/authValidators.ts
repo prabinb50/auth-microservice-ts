@@ -25,6 +25,6 @@ export const loginSchema = z.object({
 
 // update user role schema (admin only)
 export const updateRoleSchema = z.object({
-  userId: z.number().int().positive({ message: "valid user id required" }),
+  userId: z.string().uuid({ message: "valid user id required" }),
   role: z.enum(["USER", "ADMIN"], { message: "role must be USER or ADMIN" }),
 });

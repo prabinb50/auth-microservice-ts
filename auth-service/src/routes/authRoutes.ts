@@ -3,12 +3,12 @@ import { signUp, login, getUserById, refresh, logout, getProfile, listAllUsers, 
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
 import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
-import { loginRateLimiter } from "../middlewares/loginRateLimiter";
+import { loginRateLimiter, registerRateLimiter } from "../middlewares/loginRateLimiter";
 
 const router = Router();
 
-// public routes
-router.post("/register", validate(registerSchema), signUp);
+// public routes with specific rate limiting
+router.post("/register", registerRateLimiter, validate(registerSchema), signUp);
 router.post("/login", loginRateLimiter, validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
