@@ -40,7 +40,6 @@ export const registerUser = async (email: string, password: string, role: UserRo
         }
     } catch (error) {
         console.error('error calling email service:', error);
-        // don't throw error, user is still created
     }
 
     return newUser;
