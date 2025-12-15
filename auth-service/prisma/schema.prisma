@@ -16,6 +16,27 @@ enum Role {
   ADMIN
 }
 
+enum AuditAction {
+  USER_REGISTER
+  USER_LOGIN
+  USER_LOGOUT
+  USER_LOGOUT_ALL_DEVICES
+  USER_LOGOUT_OTHER_DEVICES
+  EMAIL_VERIFIED
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  TOKEN_REFRESHED
+  ROLE_CHANGED
+  USER_DELETED
+  USERS_BULK_DELETED
+  SESSION_REVOKED
+  ACCOUNT_LOCKED
+  ACCOUNT_UNLOCKED
+  LOGIN_FAILED
+  VERIFICATION_EMAIL_SENT
+  RESET_EMAIL_SENT
+}
+
 model User {
   id            String          @id @default(uuid())
   email         String          @unique
@@ -34,6 +55,8 @@ model User {
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
   sessions Session[]
+  auditLogs AuditLog[]
+  performedActions AuditLog[] @relation("PerformedBy")
 
   @@index([email])
   @@index([emailVerified])
@@ -106,4 +129,28 @@ model Session {
   @@index([refreshToken])
   @@index([isActive])
   @@index([expiresAt])
+}
+
+// audit log for security events
+model AuditLog {
+  id            String      @id @default(uuid())
+  userId        String
+  performedBy   String?     // admin who performed the action (for admin actions)
+  action        AuditAction
+  resource      String?     // affected resource (e.g., user email, session id)
+  ipAddress     String?
+  userAgent     String?
+  metadata      Json?       // additional context (role changed from/to, etc.)
+  success       Boolean     @default(true)
+  errorMessage  String?
+  createdAt     DateTime    @default(now())
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  admin         User?       @relation("PerformedBy", fields: [performedBy], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([performedBy])
+  @@index([action])
+  @@index([createdAt])
+  @@index([success])
 }

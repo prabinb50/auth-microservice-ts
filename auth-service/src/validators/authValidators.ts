@@ -28,3 +28,24 @@ export const updateRoleSchema = z.object({
   userId: z.string().uuid({ message: "valid user id required" }),
   role: z.enum(["USER", "ADMIN"], { message: "role must be USER or ADMIN" }),
 });
+
+// get audit logs query schema
+export const getAuditLogsSchema = z.object({
+  userId: z.string().uuid().optional(),
+  action: z.string().optional(),
+  resourceType: z.string().optional(),
+  status: z.enum(['SUCCESS', 'FAILURE']).optional(),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+  page: z.string().regex(/^\d+$/).transform(Number).optional(),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+});
+
+// get user audit logs query schema
+export const getUserAuditLogsSchema = z.object({
+  action: z.string().optional(),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+  page: z.string().regex(/^\d+$/).transform(Number).optional(),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+});

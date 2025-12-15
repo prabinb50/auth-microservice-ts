@@ -13,12 +13,14 @@ import {
     deleteAllNonAdminUsers,
     deleteAllUsers
 } from "../services/authServices";
+import { findRefreshToken } from "../services/tokenService";  
+import { logUserLogout } from "../services/auditService";     
 import { clearRefreshTokenCookie, getRefreshCookieName, setRefreshTokenCookie } from "../utils/cookie";
 import { getRefreshTokenExpiryDate } from "../utils/jwt";
 import { validate as validateUUID } from 'uuid';
 import logger from "../utils/logger";
 
-// handle user registration
+/// handle user registration
 export const signUp = async (req: Request, res: Response) => {
     try {
         const { email, password, role } = req.body;
@@ -32,8 +34,8 @@ export const signUp = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "user already exists" });
         }
 
-        // register user
-        const user = await registerUser(email, password, role);
+        // register user (now includes req for audit logging)
+        const user = await registerUser(email, password, role, req);
         if (!user) {
             logger.error('signup failed - could not register user', { email });
             return res.status(404).json({ message: "could not register user" });
@@ -138,7 +140,8 @@ export const refresh = async (req: Request, res: Response) => {
             return res.status(401).json({ message: "refresh token missing" });
         }
 
-        const rotated = await rotateRefreshToken(refreshToken);
+        // rotateRefreshToken now includes req for audit logging
+        const rotated = await rotateRefreshToken(refreshToken, req);
 
         // set new cookie
         setRefreshTokenCookie(res, rotated.refreshToken, rotated.expiresAt);
@@ -167,6 +170,13 @@ export const logout = async (req: Request, res: Response) => {
         const refreshToken = req.cookies?.[cookieName];
 
         if (refreshToken) {
+            // find user id from refresh token
+            const tokenData = await findRefreshToken(refreshToken);
+            if (tokenData) {
+                // log logout
+                await logUserLogout(tokenData.userId, req);
+            }
+            
             await logoutUser(refreshToken);
             logger.info('user logged out', { ip: req.ip });
         }
@@ -321,7 +331,8 @@ export const changeUserRole = async (req: AuthenticatedRequest, res: Response) =
             });
         }
 
-        const updatedUser = await updateUserRole(userId, role);
+        // updateUserRole now includes adminId and req for audit logging
+        const updatedUser = await updateUserRole(userId, role, req.user.userId, req);
 
         logger.info('user role updated', { 
             userId, 
@@ -379,7 +390,8 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
             });
         }
 
-        const result = await deleteUserById(userId);
+        // deleteUserById now includes adminId and req for audit logging
+        const result = await deleteUserById(userId, req.user.userId, req);
 
         logger.info('user deleted', { 
             userId, 
@@ -409,7 +421,8 @@ export const deleteAllNonAdmins = async (req: AuthenticatedRequest, res: Respons
             return res.status(401).json({ message: "unauthorized" });
         }
 
-        const result = await deleteAllNonAdminUsers();
+        // deleteAllNonAdminUsers now includes adminId and req for audit logging
+        const result = await deleteAllNonAdminUsers(req.user.userId, req);
 
         logger.warn('all non-admin users deleted', { 
             adminId: req.user.userId,
@@ -454,7 +467,8 @@ export const deleteAllUsersHandler = async (req: AuthenticatedRequest, res: Resp
         // exclude the current admin from deletion
         const currentAdminId = req.user.userId;
 
-        const result = await deleteAllUsers(currentAdminId);
+        // deleteAllUsers now includes req for audit logging
+        const result = await deleteAllUsers(currentAdminId, req);
 
         logger.warn('all users deleted', { 
             adminId: currentAdminId,

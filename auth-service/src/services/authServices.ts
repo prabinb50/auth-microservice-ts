@@ -7,13 +7,24 @@ import prisma from "../utils/prisma";
 import logger from "../utils/logger";
 import { Request } from "express";
 import { createSession, deactivateSession, updateSessionActivity } from "./sessionService";
+import {
+  logUserRegistration,
+  logUserLogin,
+  logLoginFailed,
+  logAccountLocked,
+  logAccountUnlocked,
+  logTokenRefreshed,
+  logRoleChanged,
+  logUserDeleted,
+  logUsersBulkDeleted,
+} from "./auditService";
 
 // constants for account locking
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_DURATION_MINUTES = 30;
 
 // register new user with email verification disabled by default
-export const registerUser = async (email: string, password: string, role: UserRole = "USER") => {
+export const registerUser = async (email: string, password: string, role: UserRole = "USER", req: Request) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -32,6 +43,9 @@ export const registerUser = async (email: string, password: string, role: UserRo
         email: newUser.email,
         role: newUser.role 
     });
+
+    // log registration
+    await logUserRegistration(newUser.id, email, req);
 
     // call email service to send verification email
     try {
@@ -103,6 +117,10 @@ export const loginUser = async (email: string, password: string, req: Request) =
             userId: user.id, 
             email 
         });
+
+        // log failed login
+        await logLoginFailed(user.id, email, 'email not verified', req);
+
         const error: any = new Error("please verify your email before logging in");
         error.code = "EMAIL_NOT_VERIFIED";
         throw error;
@@ -116,6 +134,10 @@ export const loginUser = async (email: string, password: string, req: Request) =
                 userId: user.id,
                 lockedUntil: user.accountLockedUntil 
             });
+
+            // log failed login
+            await logLoginFailed(user.id, email, 'account locked', req);
+
             const error: any = new Error("account is locked due to multiple failed login attempts");
             error.lockedUntil = user.accountLockedUntil;
             throw error;
@@ -128,6 +150,9 @@ export const loginUser = async (email: string, password: string, req: Request) =
                     accountLockedUntil: null,
                 },
             });
+
+            // log account unlocked
+            await logAccountUnlocked(user.id, email);
             logger.info('account lock expired - reset', { userId: user.id });
         }
     }
@@ -155,6 +180,9 @@ export const loginUser = async (email: string, password: string, req: Request) =
                     accountLockedUntil: lockUntil,
                 },
             });
+
+            // log account locked
+            await logAccountLocked(user.id, email, lockUntil, req);
             
             logger.warn('account locked due to failed attempts', { 
                 userId: user.id,
@@ -172,6 +200,9 @@ export const loginUser = async (email: string, password: string, req: Request) =
                     failedLoginAttempts: newAttempts,
                 },
             });
+
+            // log failed login
+            await logLoginFailed(user.id, email, 'invalid password', req);
             
             throw new Error("invalid password");
         }
@@ -201,6 +232,9 @@ export const loginUser = async (email: string, password: string, req: Request) =
         ipAddress 
     });
 
+    // log successful login
+    await logUserLogin(user.id, email, req);
+
     // generate tokens with role
     const accessToken = signAccessToken(user.id, user.role);
     const refreshToken = signRefreshToken(user.id, user.role);
@@ -224,7 +258,7 @@ export const loginUser = async (email: string, password: string, req: Request) =
 };
 
 // rotate refresh token with role and update session
-export const rotateRefreshToken = async (oldToken: string) => {
+export const rotateRefreshToken = async (oldToken: string, req: Request) => {
     const found = await findRefreshToken(oldToken);
     if (!found) {
         logger.warn('refresh token not found in database');
@@ -269,6 +303,9 @@ export const rotateRefreshToken = async (oldToken: string) => {
         role: user.role 
     });
 
+    // log token refreshed
+    await logTokenRefreshed(user.id, req);
+
     // issue new tokens with current role
     const newAccessToken = signAccessToken(user.id, user.role);
     const newRefreshToken = signRefreshToken(user.id, user.role);
@@ -307,7 +344,19 @@ export const logoutUser = async (token?: string, userId?: string) => {
 };
 
 // update user role (admin only)
-export const updateUserRole = async (userId: string, newRole: UserRole) => {
+export const updateUserRole = async (userId: string, newRole: UserRole, adminId: string, req: Request) => {
+    // get current user to log old role
+    const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true, email: true },
+    });
+
+    if (!currentUser) {
+        throw new Error('user not found');
+    }
+
+    const oldRole = currentUser.role;
+
     const user = await prisma.user.update({
         where: { id: userId },
         data: { role: newRole },
@@ -321,8 +370,13 @@ export const updateUserRole = async (userId: string, newRole: UserRole) => {
     
     logger.info('user role updated', { 
         userId, 
-        newRole 
+        newRole,
+        oldRole,
+        adminId 
     });
+
+    // log role change
+    await logRoleChanged(userId, currentUser.email, adminId, oldRole, newRole, req);
 
     return user;
 };
@@ -349,7 +403,7 @@ export const getAllUsers = async () => {
 };
 
 // delete user by id (admin only)
-export const deleteUserById = async (userId: string) => {
+export const deleteUserById = async (userId: string, adminId: string, req: Request) => {
     // check if user exists
     const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -367,14 +421,18 @@ export const deleteUserById = async (userId: string) => {
 
     logger.info('user deleted', { 
         userId, 
-        email: user.email 
+        email: user.email,
+        adminId 
     });
+
+    // log user deletion
+    await logUserDeleted(userId, user.email, adminId, req);
 
     return { message: "user deleted successfully", deletedUser: { id: user.id, email: user.email } };
 };
 
 // delete all users except admins (super admin only)
-export const deleteAllNonAdminUsers = async () => {
+export const deleteAllNonAdminUsers = async (adminId: string, req: Request) => {
     // delete all non-admin users
     const result = await prisma.user.deleteMany({
         where: {
@@ -383,8 +441,12 @@ export const deleteAllNonAdminUsers = async () => {
     });
 
     logger.warn('all non-admin users deleted', { 
-        count: result.count 
+        count: result.count,
+        adminId 
     });
+
+    // log bulk deletion
+    await logUsersBulkDeleted(adminId, result.count, 'non-admins', req);
 
     return { 
         message: "all non-admin users deleted successfully", 
@@ -393,24 +455,21 @@ export const deleteAllNonAdminUsers = async () => {
 };
 
 // delete all users including admins (super admin only)
-export const deleteAllUsers = async (excludeUserId?: string) => {
+export const deleteAllUsers = async (excludeUserId: string, req: Request) => {
     // delete all users except the one performing the action
-    let result;
-    
-    if (excludeUserId) {
-        result = await prisma.user.deleteMany({
-            where: {
-                id: { not: excludeUserId }
-            }
-        });
-    } else {
-        result = await prisma.user.deleteMany();
-    }
+    const result = await prisma.user.deleteMany({
+        where: {
+            id: { not: excludeUserId }
+        }
+    });
 
     logger.warn('all users deleted', { 
         count: result.count,
         excludedUserId: excludeUserId 
     });
+
+    // log bulk deletion
+    await logUsersBulkDeleted(excludeUserId, result.count, 'all users', req);
 
     return { 
         message: "all users deleted successfully", 

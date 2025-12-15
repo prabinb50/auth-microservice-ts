@@ -8,6 +8,7 @@ import {
 } from '../services/sessionService';
 import { getRefreshCookieName } from '../utils/cookie';
 import logger from '../utils/logger';
+import { logLogoutAllDevices, logLogoutOtherDevices } from '../services/auditService';
 
 // get all active sessions for current user
 export const getActiveSessions = async (req: AuthenticatedRequest, res: Response) => {
@@ -56,7 +57,8 @@ export const revokeSpecificSession = async (req: AuthenticatedRequest, res: Resp
       });
     }
 
-    const result = await revokeSession(sessionId, req.user.userId);
+    // revokeSession now includes req for audit logging
+    const result = await revokeSession(sessionId, req.user.userId, req);
 
     logger.info('session revoked', {
       sessionId,
@@ -97,6 +99,9 @@ export const logoutOtherDevices = async (req: AuthenticatedRequest, res: Respons
 
     const result = await revokeAllOtherSessions(req.user.userId, currentRefreshToken);
 
+    // log logout other devices
+    await logLogoutOtherDevices(req.user.userId, result.revokedCount, req);
+
     logger.info('logged out from other devices', {
       userId: req.user.userId,
       revokedCount: result.revokedCount,
@@ -124,6 +129,9 @@ export const logoutAllDevices = async (req: AuthenticatedRequest, res: Response)
     }
 
     const result = await revokeAllSessions(req.user.userId);
+
+    // log logout all devices
+    await logLogoutAllDevices(req.user.userId, result.revokedCount, req);
 
     logger.info('logged out from all devices', {
       userId: req.user.userId,

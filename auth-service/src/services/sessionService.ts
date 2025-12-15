@@ -2,6 +2,7 @@ import prisma from '../utils/prisma';
 import logger from '../utils/logger';
 import { Request } from 'express';
 import { UAParser } from 'ua-parser-js';
+import { logSessionRevoked } from './auditService';
 
 // create new session
 export const createSession = async (
@@ -114,7 +115,7 @@ export const getUserSessions = async (userId: string) => {
 };
 
 // revoke specific session
-export const revokeSession = async (sessionId: string, userId: string) => {
+export const revokeSession = async (sessionId: string, userId: string, req: Request) => {
   try {
     // find session
     const session = await prisma.session.findFirst({
@@ -143,6 +144,9 @@ export const revokeSession = async (sessionId: string, userId: string) => {
       sessionId,
       userId,
     });
+
+    // log session revoked
+    await logSessionRevoked(userId, sessionId, req);
 
     return { message: 'session revoked successfully' };
   } catch (error: any) {
