@@ -1,6 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/prisma";
 
 // save refresh token to database
 export const saveRefreshToken = async (userId: string, token: string, expiresAt: Date) => {

@@ -1,11 +1,10 @@
 import bcrypt from "bcrypt";
 const saltRounds = 10;
-import { PrismaClient } from "../generated/prisma";
 import { getRefreshTokenExpiryDate, signAccessToken, signRefreshToken } from "../utils/jwt";
 import { deleteRefreshToken, findRefreshToken, saveRefreshToken } from "./tokenService";
 import { UserRole } from "../utils/customTypes";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/prisma";
+import logger from "../utils/logger";
 
 // constants for account locking
 const MAX_FAILED_ATTEMPTS = 5;
@@ -26,6 +25,12 @@ export const registerUser = async (email: string, password: string, role: UserRo
         },
     });
 
+    logger.info('user created in database', { 
+        userId: newUser.id, 
+        email: newUser.email,
+        role: newUser.role 
+    });
+
     // call email service to send verification email
     try {
         const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:8001';
@@ -36,10 +41,22 @@ export const registerUser = async (email: string, password: string, role: UserRo
         });
 
         if (!response.ok) {
-            console.error('failed to send verification email:', await response.text());
+            logger.error('failed to send verification email', { 
+                userId: newUser.id,
+                status: response.status,
+                statusText: response.statusText 
+            });
+        } else {
+            logger.info('verification email sent', { 
+                userId: newUser.id, 
+                email: newUser.email 
+            });
         }
     } catch (error) {
-        console.error('error calling email service:', error);
+        logger.error('error calling email service', { 
+            error: error instanceof Error ? error.message : 'unknown',
+            userId: newUser.id 
+        });
     }
 
     return newUser;
@@ -72,11 +89,16 @@ export const loginUser = async (email: string, password: string) => {
     // find user
     const user = await findUserByEmail(email);
     if (!user) {
+        logger.warn('login failed - user not found', { email });
         throw new Error("user not found");
     }
 
     // check if email is verified
     if (!user.emailVerified) {
+        logger.warn('login failed - email not verified', { 
+            userId: user.id, 
+            email 
+        });
         const error: any = new Error("please verify your email before logging in");
         error.code = "EMAIL_NOT_VERIFIED";
         throw error;
@@ -86,6 +108,10 @@ export const loginUser = async (email: string, password: string) => {
     if (user.accountLockedUntil) {
         const now = new Date();
         if (user.accountLockedUntil > now) {
+            logger.warn('login failed - account locked', { 
+                userId: user.id,
+                lockedUntil: user.accountLockedUntil 
+            });
             const error: any = new Error("account is locked due to multiple failed login attempts");
             error.lockedUntil = user.accountLockedUntil;
             throw error;
@@ -98,6 +124,7 @@ export const loginUser = async (email: string, password: string) => {
                     accountLockedUntil: null,
                 },
             });
+            logger.info('account lock expired - reset', { userId: user.id });
         }
     }
 
@@ -107,6 +134,11 @@ export const loginUser = async (email: string, password: string) => {
         // increment failed attempts
         const newAttempts = user.failedLoginAttempts + 1;
         
+        logger.warn('login failed - invalid password', { 
+            userId: user.id,
+            failedAttempts: newAttempts 
+        });
+
         // check if should lock account
         if (newAttempts >= MAX_FAILED_ATTEMPTS) {
             const lockUntil = new Date();
@@ -120,6 +152,11 @@ export const loginUser = async (email: string, password: string) => {
                 },
             });
             
+            logger.warn('account locked due to failed attempts', { 
+                userId: user.id,
+                lockUntil 
+            });
+
             const error: any = new Error("account locked due to multiple failed login attempts");
             error.lockedUntil = lockUntil;
             throw error;
@@ -145,6 +182,11 @@ export const loginUser = async (email: string, password: string) => {
         },
     });
 
+    logger.info('login successful - generating tokens', { 
+        userId: user.id,
+        role: user.role 
+    });
+
     // generate tokens with role
     const accessToken = signAccessToken(user.id, user.role);
     const refreshToken = signRefreshToken(user.id, user.role);
@@ -168,6 +210,7 @@ export const loginUser = async (email: string, password: string) => {
 export const rotateRefreshToken = async (oldToken: string) => {
     const found = await findRefreshToken(oldToken);
     if (!found) {
+        logger.warn('refresh token not found in database');
         const err: any = new Error("refresh token not found");
         err.status = 401;
         throw err;
@@ -177,6 +220,7 @@ export const rotateRefreshToken = async (oldToken: string) => {
     const now = new Date();
     if (found.expiresAt < now) {
         await deleteRefreshToken(oldToken);
+        logger.warn('refresh token expired', { userId: found.userId });
         const err: any = new Error("refresh token expired");
         err.status = 401;
         throw err;
@@ -188,6 +232,9 @@ export const rotateRefreshToken = async (oldToken: string) => {
     });
 
     if (!user) {
+        logger.error('user not found during token rotation', { 
+            userId: found.userId 
+        });
         const err: any = new Error("user not found");
         err.status = 404;
         throw err;
@@ -195,6 +242,11 @@ export const rotateRefreshToken = async (oldToken: string) => {
 
     // delete old refresh token from db (rotation)
     await deleteRefreshToken(oldToken);
+
+    logger.info('rotating refresh token', { 
+        userId: user.id,
+        role: user.role 
+    });
 
     // issue new tokens with current role
     const newAccessToken = signAccessToken(user.id, user.role);
@@ -216,8 +268,10 @@ export const rotateRefreshToken = async (oldToken: string) => {
 export const logoutUser = async (token?: string, userId?: string) => {
     if (token) {
         await deleteRefreshToken(token);
+        logger.info('refresh token deleted', { token: token.substring(0, 10) + '...' });
     } else if (userId) {
         await prisma.refreshToken.deleteMany({ where: { userId } });
+        logger.info('all refresh tokens deleted for user', { userId });
     }
 };
 
@@ -233,6 +287,12 @@ export const updateUserRole = async (userId: string, newRole: UserRole) => {
             updatedAt: true,
         },
     });
+    
+    logger.info('user role updated', { 
+        userId, 
+        newRole 
+    });
+
     return user;
 };
 
@@ -263,12 +323,18 @@ export const deleteUserById = async (userId: string) => {
     });
 
     if (!user) {
+        logger.warn('delete user failed - user not found', { userId });
         throw new Error("user not found");
     }
 
     // delete user (cascade will delete related tokens)
     await prisma.user.delete({
         where: { id: userId },
+    });
+
+    logger.info('user deleted', { 
+        userId, 
+        email: user.email 
     });
 
     return { message: "user deleted successfully", deletedUser: { id: user.id, email: user.email } };
@@ -281,6 +347,10 @@ export const deleteAllNonAdminUsers = async () => {
         where: {
             role: "USER",
         },
+    });
+
+    logger.warn('all non-admin users deleted', { 
+        count: result.count 
     });
 
     return { 
@@ -303,6 +373,11 @@ export const deleteAllUsers = async (excludeUserId?: string) => {
     } else {
         result = await prisma.user.deleteMany();
     }
+
+    logger.warn('all users deleted', { 
+        count: result.count,
+        excludedUserId: excludeUserId 
+    });
 
     return { 
         message: "all users deleted successfully", 

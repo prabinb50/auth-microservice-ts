@@ -9,6 +9,8 @@ import authRoutes from './src/routes/authRoutes';
 import cookieParser from 'cookie-parser';
 import { sanitizeInput } from './src/middlewares/sanitize';
 import { apiRateLimiter } from './src/middlewares/loginRateLimiter';
+import logger, { morganStream } from './src/utils/logger';
+import { requestLogger } from './src/utils/requestLogger';
 
 // configure the server
 const app = express();
@@ -20,6 +22,10 @@ app.set('trust proxy', 1);
 if (process.env.NODE_ENV === 'production') {
     app.use((req: Request, res: Response, next: NextFunction) => {
         if (req.header('x-forwarded-proto') !== 'https') {
+            logger.warn('redirecting http to https', { 
+                url: req.url, 
+                ip: req.ip 
+            });
             return res.redirect(301, `https://${req.header('host')}${req.url}`);
         }
         next();
@@ -53,12 +59,11 @@ app.use(helmet({
     xssFilter: true,
 }));
 
-// logging middleware
-if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
-} else {
-    app.use(morgan('combined'));
-}
+// logging middleware with winston
+app.use(morgan('combined', { stream: morganStream }));
+
+// custom request logger
+app.use(requestLogger);
 
 // compression middleware
 app.use(compression());
@@ -90,6 +95,7 @@ app.use(
                 return callback(null, true);
             }
             
+            logger.warn('cors policy blocked request', { origin });
             const msg = 'the cors policy for this site does not allow access from the specified origin.';
             return callback(new Error(msg), false);
         },
@@ -114,6 +120,7 @@ app.use('/auth', authRoutes);
 
 // health check endpoint
 app.get('/', (req: Request, res: Response) => {
+    logger.info('health check accessed');
     res.status(200).json({
         status: 'ok',
         service: 'auth-service',
@@ -123,6 +130,11 @@ app.get('/', (req: Request, res: Response) => {
 
 // 404 handler
 app.use((req: Request, res: Response) => {
+    logger.warn('endpoint not found', { 
+        path: req.originalUrl, 
+        method: req.method,
+        ip: req.ip 
+    });
     res.status(404).json({
         message: 'endpoint not found',
         path: req.originalUrl,
@@ -131,7 +143,13 @@ app.use((req: Request, res: Response) => {
 
 // global error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    console.error('global error:', err);
+    logger.error('global error handler', {
+        error: err.message,
+        stack: err.stack,
+        url: req.url,
+        method: req.method,
+        ip: req.ip,
+    });
     
     // don't leak error details in production
     const errorResponse = {
@@ -149,6 +167,9 @@ const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || 'localhost';
 
 app.listen(PORT, () => {
-    console.log(`auth service running at http://${HOST}:${PORT}`);
-    console.log(`environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`auth service started`, {
+        port: PORT,
+        host: HOST,
+        environment: process.env.NODE_ENV || 'development',
+    });
 });
