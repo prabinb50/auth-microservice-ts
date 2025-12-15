@@ -3,6 +3,7 @@ import { passwordResetEmailTemplate, verificationEmailTemplate } from '../templa
 import { transporter } from '../utils/mailer';
 import { generatePasswordResetToken, generateVerificationToken, getResetTokenExpiry, getVerificationTokenExpiry } from '../utils/tokenGenerator';
 import bcrypt from 'bcrypt';
+import logger from '../utils/logger';
 
 const SALT_ROUNDS = 10;
 
@@ -11,6 +12,8 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
   // generate token
   const token = generateVerificationToken(userId);
   const expiresAt = getVerificationTokenExpiry();
+
+  logger.info('creating verification token', { userId, email });
 
   // save token to database
   await prisma.verificationToken.create({
@@ -24,6 +27,8 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
   // create verification link
   const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
+  logger.info('sending verification email', { userId, email });
+
   // send email
   await transporter.sendMail({
     from: `"Auth Service" <${process.env.SMTP_USER}>`,
@@ -31,6 +36,8 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
     subject: 'verify your email address',
     html: verificationEmailTemplate(verificationLink, email.split('@')[0]),
   });
+
+  logger.info('verification email sent', { userId, email });
 
   return { message: 'verification email sent successfully' };
 };
@@ -44,19 +51,27 @@ export const verifyEmail = async (token: string) => {
   });
 
   if (!verificationToken) {
+    logger.warn('invalid verification token');
     throw new Error('invalid verification token');
   }
 
   // check if token expired
   if (verificationToken.expiresAt < new Date()) {
     await prisma.verificationToken.delete({ where: { token } });
+    logger.warn('verification token expired', { userId: verificationToken.userId });
     throw new Error('verification token expired');
   }
 
   // check if already verified
   if (verificationToken.user.emailVerified) {
+    logger.warn('email already verified', { userId: verificationToken.userId });
     throw new Error('email already verified');
   }
+
+  logger.info('verifying email', {
+    userId: verificationToken.userId,
+    email: verificationToken.user.email
+  });
 
   // update user email verified status
   await prisma.user.update({
@@ -67,6 +82,10 @@ export const verifyEmail = async (token: string) => {
   // delete used token
   await prisma.verificationToken.delete({ where: { token } });
 
+  logger.info('email verified successfully', {
+    userId: verificationToken.userId
+  });
+
   return { message: 'email verified successfully' };
 };
 
@@ -76,9 +95,15 @@ export const sendPasswordResetEmail = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
+    logger.warn('password reset requested for non-existent email', { email });
     // don't reveal if user exists or not (security best practice)
     return { message: 'if email exists, password reset link has been sent' };
   }
+
+  logger.info('generating password reset token', {
+    userId: user.id,
+    email
+  });
 
   // generate reset token
   const token = generatePasswordResetToken(user.id);
@@ -101,6 +126,8 @@ export const sendPasswordResetEmail = async (email: string) => {
   // create reset link
   const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
+  logger.info('sending password reset email', { userId: user.id, email });
+
   // send email
   await transporter.sendMail({
     from: `"Auth Service" <${process.env.SMTP_USER}>`,
@@ -108,6 +135,8 @@ export const sendPasswordResetEmail = async (email: string) => {
     subject: 'reset your password',
     html: passwordResetEmailTemplate(resetLink, user.email.split('@')[0]),
   });
+
+  logger.info('password reset email sent', { userId: user.id, email });
 
   return { message: 'if email exists, password reset link has been sent' };
 };
@@ -121,19 +150,27 @@ export const resetPassword = async (token: string, newPassword: string) => {
   });
 
   if (!resetToken) {
+    logger.warn('invalid reset token');
     throw new Error('invalid reset token');
   }
 
   // check if token expired
   if (resetToken.expiresAt < new Date()) {
     await prisma.passwordResetToken.delete({ where: { token } });
+    logger.warn('reset token expired', { userId: resetToken.userId });
     throw new Error('reset token expired');
   }
 
   // check if token already used
   if (resetToken.used) {
+    logger.warn('reset token already used', { userId: resetToken.userId });
     throw new Error('reset token already used');
   }
+
+  logger.info('resetting password', {
+    userId: resetToken.userId,
+    email: resetToken.user.email
+  });
 
   // hash new password
   const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
@@ -141,7 +178,7 @@ export const resetPassword = async (token: string, newPassword: string) => {
   // update user password
   await prisma.user.update({
     where: { id: resetToken.userId },
-    data: { 
+    data: {
       password: hashedPassword,
       failedLoginAttempts: 0,
       accountLockedUntil: null,
@@ -159,6 +196,10 @@ export const resetPassword = async (token: string, newPassword: string) => {
     where: { userId: resetToken.userId },
   });
 
+  logger.info('password reset successfully', {
+    userId: resetToken.userId
+  });
+
   return { message: 'password reset successfully' };
 };
 
@@ -168,12 +209,22 @@ export const resendVerificationEmail = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
+    logger.warn('resend verification - user not found', { email });
     throw new Error('user not found');
   }
 
   if (user.emailVerified) {
+    logger.warn('resend verification - email already verified', {
+      userId: user.id,
+      email
+    });
     throw new Error('email already verified');
   }
+
+  logger.info('resending verification email', {
+    userId: user.id,
+    email
+  });
 
   // delete old verification tokens
   await prisma.verificationToken.deleteMany({

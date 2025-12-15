@@ -5685,6 +5685,42 @@ export namespace Prisma {
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+  export const UserOrderByRelevanceFieldEnum: {
+    id: 'id',
+    email: 'email',
+    password: 'password'
+  };
+
+  export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+  export const RefreshTokenOrderByRelevanceFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId'
+  };
+
+  export type RefreshTokenOrderByRelevanceFieldEnum = (typeof RefreshTokenOrderByRelevanceFieldEnum)[keyof typeof RefreshTokenOrderByRelevanceFieldEnum]
+
+
+  export const VerificationTokenOrderByRelevanceFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId'
+  };
+
+  export type VerificationTokenOrderByRelevanceFieldEnum = (typeof VerificationTokenOrderByRelevanceFieldEnum)[keyof typeof VerificationTokenOrderByRelevanceFieldEnum]
+
+
+  export const PasswordResetTokenOrderByRelevanceFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId'
+  };
+
+  export type PasswordResetTokenOrderByRelevanceFieldEnum = (typeof PasswordResetTokenOrderByRelevanceFieldEnum)[keyof typeof PasswordResetTokenOrderByRelevanceFieldEnum]
+
+
   /**
    * Field references
    */
@@ -5801,6 +5837,7 @@ export namespace Prisma {
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     verificationTokens?: VerificationTokenOrderByRelationAggregateInput
     passwordResetTokens?: PasswordResetTokenOrderByRelationAggregateInput
+    _relevance?: UserOrderByRelevanceInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -5872,6 +5909,7 @@ export namespace Prisma {
     expiresAt?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    _relevance?: RefreshTokenOrderByRelevanceInput
   }
 
   export type RefreshTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -5927,6 +5965,7 @@ export namespace Prisma {
     expiresAt?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    _relevance?: VerificationTokenOrderByRelevanceInput
   }
 
   export type VerificationTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -5984,6 +6023,7 @@ export namespace Prisma {
     used?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    _relevance?: PasswordResetTokenOrderByRelevanceInput
   }
 
   export type PasswordResetTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -6302,6 +6342,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
@@ -6386,6 +6427,12 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type UserOrderByRelevanceInput = {
+    fields: UserOrderByRelevanceFieldEnum | UserOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -6441,6 +6488,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
@@ -6515,6 +6563,12 @@ export namespace Prisma {
     isNot?: UserWhereInput
   }
 
+  export type RefreshTokenOrderByRelevanceInput = {
+    fields: RefreshTokenOrderByRelevanceFieldEnum | RefreshTokenOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type RefreshTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
@@ -6539,6 +6593,12 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type VerificationTokenOrderByRelevanceInput = {
+    fields: VerificationTokenOrderByRelevanceFieldEnum | VerificationTokenOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
   export type VerificationTokenCountOrderByAggregateInput = {
     id?: SortOrder
     token?: SortOrder
@@ -6561,6 +6621,12 @@ export namespace Prisma {
     userId?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+  }
+
+  export type PasswordResetTokenOrderByRelevanceInput = {
+    fields: PasswordResetTokenOrderByRelevanceFieldEnum | PasswordResetTokenOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
   }
 
   export type PasswordResetTokenCountOrderByAggregateInput = {
@@ -6797,6 +6863,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
@@ -6856,6 +6923,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>

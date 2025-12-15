@@ -144,6 +144,30 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password'
+};
+
+exports.Prisma.RefreshTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
+
+exports.Prisma.VerificationTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
+
+exports.Prisma.PasswordResetTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN'
@@ -179,7 +203,9 @@ const config = {
         "native": true
       }
     ],
-    "previewFeatures": [],
+    "previewFeatures": [
+      "fullTextSearchPostgres"
+    ],
     "sourceFilePath": "D:\\auth\\email-service\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
@@ -203,8 +229,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nenum Role {\n  USER\n  ADMIN\n}\n\nmodel User {\n  id            String   @id @default(uuid())\n  email         String   @unique\n  password      String\n  role          Role     @default(USER)\n  emailVerified Boolean  @default(false)\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @updatedAt\n\n  // account security fields\n  failedLoginAttempts Int       @default(0)\n  accountLockedUntil  DateTime?\n\n  refreshTokens       RefreshToken[]\n  verificationTokens  VerificationToken[]\n  passwordResetTokens PasswordResetToken[]\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\n// email verification token\nmodel VerificationToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n\n// password reset token\nmodel PasswordResetToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  used      Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n}\n",
-  "inlineSchemaHash": "d52b9608d42987bea5fe770d1961d663473040b9c4c9d30f8eeb4ee84970441f",
+  "inlineSchema": "generator client {\n  provider        = \"prisma-client-js\"\n  output          = \"../src/generated/prisma\"\n  previewFeatures = [\"fullTextSearch\"]\n}\n\ndatasource db {\n  provider     = \"postgresql\"\n  url          = env(\"DATABASE_URL\")\n  // connection pooling configuration\n  relationMode = \"prisma\"\n}\n\nenum Role {\n  USER\n  ADMIN\n}\n\nmodel User {\n  id            String   @id @default(uuid())\n  email         String   @unique\n  password      String\n  role          Role     @default(USER)\n  emailVerified Boolean  @default(false)\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @updatedAt\n\n  // account security fields\n  failedLoginAttempts Int       @default(0)\n  accountLockedUntil  DateTime?\n\n  refreshTokens       RefreshToken[]\n  verificationTokens  VerificationToken[]\n  passwordResetTokens PasswordResetToken[]\n\n  @@index([email])\n  @@index([emailVerified])\n}\n\nmodel RefreshToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([token])\n  @@index([expiresAt])\n}\n\n// email verification token\nmodel VerificationToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([token])\n  @@index([expiresAt])\n}\n\n// password reset token\nmodel PasswordResetToken {\n  id        String   @id @default(uuid())\n  token     String   @unique\n  userId    String\n  expiresAt DateTime\n  used      Boolean  @default(false)\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n  @@index([token])\n  @@index([expiresAt])\n  @@index([used])\n}\n",
+  "inlineSchemaHash": "cbabfca2d2af6b514bf1d2f33c6565b47b8a3d5a78edb14ab993cd77b8d8afc8",
   "copyEngine": true
 }
 config.dirname = '/'

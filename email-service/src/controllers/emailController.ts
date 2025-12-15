@@ -6,17 +6,26 @@ import {
   resetPassword,
   resendVerificationEmail,
 } from '../services/emailService';
+import logger from '../utils/logger';
 
 // send verification email
 export const handleSendVerification = async (req: Request, res: Response) => {
   try {
     const { userId, email } = req.body;
 
+    logger.info('sending verification email', { userId, email });
+
     await sendVerificationEmail(userId, email);
     
+    logger.info('verification email sent successfully', { userId, email });
+
     return res.status(200).json({ message: 'verification email sent successfully' });
   } catch (error: any) {
-    console.error('send verification error:', error);
+    logger.error('send verification error', { 
+      error: error.message,
+      userId: req.body.userId,
+      email: req.body.email 
+    });
     return res.status(500).json({ 
       message: 'failed to send verification email', 
       error: error.message 
@@ -29,11 +38,20 @@ export const handleVerifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
+    logger.info('verifying email token', { 
+      token: token.substring(0, 10) + '...' 
+    });
+
     const result = await verifyEmail(token);
     
+    logger.info('email verified successfully');
+
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error('verify email error:', error);
+    logger.error('verify email error', { 
+      error: error.message,
+      token: req.body.token?.substring(0, 10) + '...' 
+    });
     return res.status(400).json({ 
       message: 'email verification failed', 
       error: error.message 
@@ -46,11 +64,18 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
+    logger.info('password reset requested', { email });
+
     const result = await sendPasswordResetEmail(email);
     
+    logger.info('password reset email processed', { email });
+
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error('forgot password error:', error);
+    logger.error('forgot password error', { 
+      error: error.message,
+      email: req.body.email 
+    });
     return res.status(500).json({ 
       message: 'failed to send password reset email', 
       error: error.message 
@@ -63,11 +88,20 @@ export const handleResetPassword = async (req: Request, res: Response) => {
   try {
     const { token, newPassword } = req.body;
 
+    logger.info('password reset attempt', { 
+      token: token.substring(0, 10) + '...' 
+    });
+
     const result = await resetPassword(token, newPassword);
     
+    logger.info('password reset successfully');
+
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error('reset password error:', error);
+    logger.error('reset password error', { 
+      error: error.message,
+      token: req.body.token?.substring(0, 10) + '...' 
+    });
     return res.status(400).json({ 
       message: 'password reset failed', 
       error: error.message 
@@ -80,11 +114,18 @@ export const handleResendVerification = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
+    logger.info('resending verification email', { email });
+
     const result = await resendVerificationEmail(email);
     
+    logger.info('verification email resent successfully', { email });
+
     return res.status(200).json(result);
   } catch (error: any) {
-    console.error('resend verification error:', error);
+    logger.error('resend verification error', { 
+      error: error.message,
+      email: req.body.email 
+    });
     return res.status(400).json({ 
       message: 'failed to resend verification email', 
       error: error.message 

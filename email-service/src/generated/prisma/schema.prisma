@@ -1,11 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  // connection pooling configuration
+  relationMode = "prisma"
 }
 
 enum Role {
@@ -29,6 +32,9 @@ model User {
   refreshTokens       RefreshToken[]
   verificationTokens  VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+
+  @@index([email])
+  @@index([emailVerified])
 }
 
 model RefreshToken {
@@ -39,6 +45,10 @@ model RefreshToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
 }
 
 // email verification token
@@ -50,6 +60,10 @@ model VerificationToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
 }
 
 // password reset token
@@ -62,4 +76,9 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([used])
 }

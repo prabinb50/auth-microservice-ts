@@ -172,6 +172,30 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password'
+};
+
+exports.Prisma.RefreshTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
+
+exports.Prisma.VerificationTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
+
+exports.Prisma.PasswordResetTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN'
