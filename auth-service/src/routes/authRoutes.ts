@@ -1,5 +1,23 @@
 import { Router } from "express";
-import { signUp, login, getUserById, refresh, logout, getProfile, listAllUsers, changeUserRole, deleteUser, deleteAllNonAdmins, deleteAllUsersHandler } from "../controllers/authController";
+import { 
+  signUp, 
+  login, 
+  getUserById, 
+  refresh, 
+  logout, 
+  getProfile, 
+  listAllUsers, 
+  changeUserRole, 
+  deleteUser, 
+  deleteAllNonAdmins, 
+  deleteAllUsersHandler 
+} from "../controllers/authController";
+import {
+  getActiveSessions,
+  revokeSpecificSession,
+  logoutOtherDevices,
+  logoutAllDevices,
+} from "../controllers/sessionController";
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
 import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
@@ -16,6 +34,12 @@ router.post("/logout", logout);
 // protected routes (any authenticated user)
 router.get("/profile", authenticate, getProfile);
 router.get("/user/:id", authenticate, getUserById);
+
+// session management routes (authenticated users)
+router.get("/sessions", authenticate, getActiveSessions);
+router.delete("/sessions/:sessionId", authenticate, revokeSpecificSession);
+router.post("/sessions/logout-other-devices", authenticate, logoutOtherDevices);
+router.post("/sessions/logout-all-devices", authenticate, logoutAllDevices);
 
 // admin-only routes
 router.get("/admin/users", authenticate, requireAdmin, listAllUsers);

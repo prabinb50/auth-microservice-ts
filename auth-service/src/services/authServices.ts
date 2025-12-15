@@ -5,6 +5,8 @@ import { deleteRefreshToken, findRefreshToken, saveRefreshToken } from "./tokenS
 import { UserRole } from "../utils/customTypes";
 import prisma from "../utils/prisma";
 import logger from "../utils/logger";
+import { Request } from "express";
+import { createSession, deactivateSession, updateSessionActivity } from "./sessionService";
 
 // constants for account locking
 const MAX_FAILED_ATTEMPTS = 5;
@@ -71,6 +73,8 @@ export const findUserById = async (id: string) => {
             email: true,
             role: true,
             emailVerified: true,
+            lastLoginAt: true,
+            lastLoginIp: true,
             createdAt: true,
             updatedAt: true,
         },
@@ -84,8 +88,8 @@ export const findUserByEmail = async (email: string) => {
     });
 };
 
-// login user - check email verification status
-export const loginUser = async (email: string, password: string) => {
+// login user - check email verification status and track session
+export const loginUser = async (email: string, password: string, req: Request) => {
     // find user
     const user = await findUserByEmail(email);
     if (!user) {
@@ -173,18 +177,28 @@ export const loginUser = async (email: string, password: string) => {
         }
     }
 
-    // successful login - reset failed attempts
+    // get ip address
+    const ipAddress = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() 
+                      || req.headers['x-real-ip'] as string
+                      || req.ip 
+                      || req.socket.remoteAddress 
+                      || 'unknown';
+
+    // successful login - reset failed attempts and update last login
     await prisma.user.update({
         where: { id: user.id },
         data: {
             failedLoginAttempts: 0,
             accountLockedUntil: null,
+            lastLoginAt: new Date(),
+            lastLoginIp: ipAddress,
         },
     });
 
     logger.info('login successful - generating tokens', { 
         userId: user.id,
-        role: user.role 
+        role: user.role,
+        ipAddress 
     });
 
     // generate tokens with role
@@ -194,6 +208,9 @@ export const loginUser = async (email: string, password: string) => {
     // save refresh token in db
     const expiresAt = getRefreshTokenExpiryDate();
     await saveRefreshToken(user.id, refreshToken, expiresAt);
+
+    // create session
+    await createSession(user.id, refreshToken, expiresAt, req);
 
     return { 
         accessToken, 
@@ -206,7 +223,7 @@ export const loginUser = async (email: string, password: string) => {
     };
 };
 
-// rotate refresh token with role
+// rotate refresh token with role and update session
 export const rotateRefreshToken = async (oldToken: string) => {
     const found = await findRefreshToken(oldToken);
     if (!found) {
@@ -220,6 +237,7 @@ export const rotateRefreshToken = async (oldToken: string) => {
     const now = new Date();
     if (found.expiresAt < now) {
         await deleteRefreshToken(oldToken);
+        await deactivateSession(oldToken);
         logger.warn('refresh token expired', { userId: found.userId });
         const err: any = new Error("refresh token expired");
         err.status = 401;
@@ -243,6 +261,9 @@ export const rotateRefreshToken = async (oldToken: string) => {
     // delete old refresh token from db (rotation)
     await deleteRefreshToken(oldToken);
 
+    // deactivate old session
+    await deactivateSession(oldToken);
+
     logger.info('rotating refresh token', { 
         userId: user.id,
         role: user.role 
@@ -256,6 +277,9 @@ export const rotateRefreshToken = async (oldToken: string) => {
     // save new refresh token
     await saveRefreshToken(user.id, newRefreshToken, expiresAt);
 
+    // update session activity
+    await updateSessionActivity(oldToken);
+
     return { 
         accessToken: newAccessToken, 
         refreshToken: newRefreshToken, 
@@ -264,14 +288,21 @@ export const rotateRefreshToken = async (oldToken: string) => {
     };
 };
 
-// logout user by deleting refresh token(s)
+// logout user by deleting refresh token(s) and deactivating session
 export const logoutUser = async (token?: string, userId?: string) => {
     if (token) {
         await deleteRefreshToken(token);
-        logger.info('refresh token deleted', { token: token.substring(0, 10) + '...' });
+        await deactivateSession(token);
+        logger.info('refresh token deleted and session deactivated', { 
+            token: token.substring(0, 10) + '...' 
+        });
     } else if (userId) {
         await prisma.refreshToken.deleteMany({ where: { userId } });
-        logger.info('all refresh tokens deleted for user', { userId });
+        await prisma.session.updateMany({ 
+            where: { userId }, 
+            data: { isActive: false } 
+        });
+        logger.info('all refresh tokens deleted and sessions deactivated for user', { userId });
     }
 };
 
@@ -306,6 +337,8 @@ export const getAllUsers = async () => {
             emailVerified: true,
             failedLoginAttempts: true,
             accountLockedUntil: true,
+            lastLoginAt: true,
+            lastLoginIp: true,
             createdAt: true,
             updatedAt: true,
         },
@@ -327,7 +360,7 @@ export const deleteUserById = async (userId: string) => {
         throw new Error("user not found");
     }
 
-    // delete user (cascade will delete related tokens)
+    // delete user (cascade will delete related tokens and sessions)
     await prisma.user.delete({
         where: { id: userId },
     });

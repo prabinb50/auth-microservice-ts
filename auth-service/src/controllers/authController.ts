@@ -72,7 +72,7 @@ export const login = async (req: Request, res: Response) => {
 
         logger.info('login attempt', { email, ip: req.ip });
 
-        const { accessToken, refreshToken, user } = await loginUser(email, password);
+        const { accessToken, refreshToken, user } = await loginUser(email, password, req);
 
         // set refresh cookie
         const expiresAt = getRefreshTokenExpiryDate();

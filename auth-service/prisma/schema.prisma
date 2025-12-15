@@ -27,10 +27,13 @@ model User {
 
   failedLoginAttempts Int       @default(0)
   accountLockedUntil  DateTime?
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
 
   refreshTokens RefreshToken[]
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+  sessions Session[]
 
   @@index([email])
   @@index([emailVerified])
@@ -78,4 +81,29 @@ model PasswordResetToken {
   @@index([token])
   @@index([expiresAt])
   @@index([used])
+}
+
+// session tracking model
+model Session {
+  id            String   @id @default(uuid())
+  userId        String
+  refreshToken  String   @unique
+  deviceName    String?
+  deviceType    String?
+  browser       String?
+  os            String?
+  ipAddress     String?
+  country       String?
+  city          String?
+  isActive      Boolean  @default(true)
+  lastActivityAt DateTime @default(now())
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refreshToken])
+  @@index([isActive])
+  @@index([expiresAt])
 }
