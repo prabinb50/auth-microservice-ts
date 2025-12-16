@@ -11,17 +11,20 @@ export const initSentry = () => {
     return;
   }
 
+  const dsn = process.env.SENTRY_DSN;
+  if (!dsn) {
+    logger.warn('sentry dsn not configured');
+    return;
+  }
+
   try {
     Sentry.init({
-      dsn: process.env.SENTRY_DSN,
+      dsn: dsn, // now guaranteed to be string, not string | undefined
       environment: process.env.SENTRY_ENVIRONMENT || 'development',
 
-      // performance & profiling 
+      // performance & profiling (built-in to sentry v10)
       tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '1.0'),
       profilesSampleRate: parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '1.0'),
-
-      // enable performance monitoring
-      enableTracing: true,
 
       // sanitize sensitive data
       beforeSend(event) {
@@ -84,9 +87,11 @@ export const initSentry = () => {
 export const captureException = (error: Error, context?: Record<string, any>) => {
   if (!isSentryEnabled) return;
 
-  Sentry.captureException(error, {
-    contexts: context ? { custom: context } : undefined,
-  });
+  if (context) {
+    Sentry.captureException(error, { extra: context });
+  } else {
+    Sentry.captureException(error);
+  }
 };
 
 // capture message manually
@@ -97,10 +102,11 @@ export const captureMessage = (
 ) => {
   if (!isSentryEnabled) return;
 
-  Sentry.captureMessage(message, {
-    level,
-    contexts: context ? { custom: context } : undefined,
-  });
+  if (context) {
+    Sentry.captureMessage(message, { level, extra: context });
+  } else {
+    Sentry.captureMessage(message, level);
+  }
 };
 
 // set user context for error tracking
