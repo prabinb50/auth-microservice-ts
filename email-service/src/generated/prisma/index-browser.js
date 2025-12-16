@@ -129,6 +129,8 @@ exports.Prisma.UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  lastLoginAt: 'lastLoginAt',
+  lastLoginIp: 'lastLoginIp',
   failedLoginAttempts: 'failedLoginAttempts',
   accountLockedUntil: 'accountLockedUntil'
 };
@@ -158,6 +160,18 @@ exports.Prisma.PasswordResetTokenScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MagicLinkTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  used: 'used',
+  usedAt: 'usedAt',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -176,7 +190,8 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
   id: 'id',
   email: 'email',
-  password: 'password'
+  password: 'password',
+  lastLoginIp: 'lastLoginIp'
 };
 
 exports.Prisma.RefreshTokenOrderByRelevanceFieldEnum = {
@@ -196,6 +211,14 @@ exports.Prisma.PasswordResetTokenOrderByRelevanceFieldEnum = {
   token: 'token',
   userId: 'userId'
 };
+
+exports.Prisma.MagicLinkTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent'
+};
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ADMIN: 'ADMIN'
@@ -205,7 +228,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   RefreshToken: 'RefreshToken',
   VerificationToken: 'VerificationToken',
-  PasswordResetToken: 'PasswordResetToken'
+  PasswordResetToken: 'PasswordResetToken',
+  MagicLinkToken: 'MagicLinkToken'
 };
 
 /**

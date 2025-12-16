@@ -1,7 +1,7 @@
 import prisma from '../utils/prisma';
-import { passwordResetEmailTemplate, verificationEmailTemplate } from '../templates/emailTemplates';
+import { passwordResetEmailTemplate, verificationEmailTemplate, magicLinkEmailTemplate } from '../templates/emailTemplates';
 import { transporter } from '../utils/mailer';
-import { generatePasswordResetToken, generateVerificationToken, getResetTokenExpiry, getVerificationTokenExpiry } from '../utils/tokenGenerator';
+import { generatePasswordResetToken, generateVerificationToken, generateMagicLinkToken, getResetTokenExpiry, getVerificationTokenExpiry, getMagicLinkTokenExpiry } from '../utils/tokenGenerator';
 import bcrypt from 'bcrypt';
 import logger from '../utils/logger';
 
@@ -31,7 +31,7 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
 
   // send email
   await transporter.sendMail({
-    from: `"Auth Service" <${process.env.SMTP_USER}>`,
+    from: `"Auth Service" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'verify your email address',
     html: verificationEmailTemplate(verificationLink, email.split('@')[0]),
@@ -130,7 +130,7 @@ export const sendPasswordResetEmail = async (email: string) => {
 
   // send email
   await transporter.sendMail({
-    from: `"Auth Service" <${process.env.SMTP_USER}>`,
+    from: `"Auth Service" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'reset your password',
     html: passwordResetEmailTemplate(resetLink, user.email.split('@')[0]),
@@ -233,4 +233,60 @@ export const resendVerificationEmail = async (email: string) => {
 
   // send new verification email
   return await sendVerificationEmail(user.id, user.email);
+};
+
+// send magic login link
+export const sendMagicLinkEmail = async (
+  userId: string,
+  email: string,
+  ipAddress: string,
+  userAgent: string
+) => {
+  try {
+    logger.info('generating magic link token', { userId, email });
+
+    // generate magic link token
+    const token = generateMagicLinkToken(userId);
+    const expiresAt = getMagicLinkTokenExpiry();
+
+    // save token to database
+    await prisma.magicLinkToken.create({
+      data: {
+        token,
+        userId,
+        expiresAt,
+        ipAddress,
+        userAgent,
+      },
+    });
+
+    logger.info('magic link token saved to database', {
+      userId,
+      expiresAt,
+    });
+
+    // create magic link
+    const magicLink = `${process.env.CLIENT_URL}/magic-login?token=${token}`;
+
+    logger.info('sending magic link email', { userId, email });
+
+    // send email
+    await transporter.sendMail({
+      from: `"Auth Service" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'your magic login link',
+      html: magicLinkEmailTemplate(magicLink, email.split('@')[0]),
+    });
+
+    logger.info('magic link email sent successfully', { userId, email });
+
+    return { message: 'magic login link sent successfully' };
+  } catch (error: any) {
+    logger.error('failed to send magic link email', {
+      userId,
+      email,
+      error: error.message,
+    });
+    throw error;
+  }
 };

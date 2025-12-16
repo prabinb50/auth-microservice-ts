@@ -7,7 +7,6 @@ generator client {
 datasource db {
   provider     = "postgresql"
   url          = env("DATABASE_URL")
-  // connection pooling configuration
   relationMode = "prisma"
 }
 
@@ -17,24 +16,28 @@ enum Role {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password      String
-  role          Role     @default(USER)
-  emailVerified Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // account security fields
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  password            String
+  role                Role      @default(USER)
+  emailVerified       Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
   failedLoginAttempts Int       @default(0)
   accountLockedUntil  DateTime?
 
+  // relations
   refreshTokens       RefreshToken[]
   verificationTokens  VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+  magicLinkTokens     MagicLinkToken[]
 
   @@index([email])
+  @@index([role])
   @@index([emailVerified])
+  @@index([createdAt])
 }
 
 model RefreshToken {
@@ -51,7 +54,6 @@ model RefreshToken {
   @@index([expiresAt])
 }
 
-// email verification token
 model VerificationToken {
   id        String   @id @default(uuid())
   token     String   @unique
@@ -66,7 +68,6 @@ model VerificationToken {
   @@index([expiresAt])
 }
 
-// password reset token
 model PasswordResetToken {
   id        String   @id @default(uuid())
   token     String   @unique
@@ -74,6 +75,25 @@ model PasswordResetToken {
   expiresAt DateTime
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([used])
+}
+
+model MagicLinkToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

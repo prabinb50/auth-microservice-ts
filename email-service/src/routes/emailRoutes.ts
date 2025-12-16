@@ -1,7 +1,21 @@
 import { Router } from 'express';
-import {handleSendVerification, handleVerifyEmail, handleForgotPassword, handleResetPassword, handleResendVerification } from '../controllers/emailController';
+import {
+  handleSendVerification,
+  handleVerifyEmail,
+  handleForgotPassword,
+  handleResetPassword,
+  handleResendVerification,
+  handleSendMagicLink,
+} from '../controllers/emailController';
 import { validate } from '../middlewares/validate';
-import {sendVerificationSchema, verifyEmailSchema, forgotPasswordSchema, resetPasswordSchema, resendVerificationSchema} from '../validators/emailValidators';
+import {
+  sendVerificationSchema,
+  verifyEmailSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  resendVerificationSchema,
+  sendMagicLinkSchema,
+} from '../validators/emailValidators';
 import { emailSendRateLimiter, verificationRateLimiter } from '../middlewares/rateLimiter';
 
 const router = Router();
@@ -20,5 +34,8 @@ router.post('/forgot-password', emailSendRateLimiter, validate(forgotPasswordSch
 
 // reset password
 router.post('/reset-password', verificationRateLimiter, validate(resetPasswordSchema), handleResetPassword);
+
+// send magic login link (called by auth-service)
+router.post('/send-magic-link', emailSendRateLimiter, validate(sendMagicLinkSchema), handleSendMagicLink);
 
 export default router;

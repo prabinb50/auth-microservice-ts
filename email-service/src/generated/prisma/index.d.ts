@@ -33,6 +33,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  * 
  */
 export type PasswordResetToken = $Result.DefaultSelection<Prisma.$PasswordResetTokenPayload>
+/**
+ * Model MagicLinkToken
+ * 
+ */
+export type MagicLinkToken = $Result.DefaultSelection<Prisma.$MagicLinkTokenPayload>
 
 /**
  * Enums
@@ -208,6 +213,16 @@ export class PrismaClient<
     * ```
     */
   get passwordResetToken(): Prisma.PasswordResetTokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.magicLinkToken`: Exposes CRUD operations for the **MagicLinkToken** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MagicLinkTokens
+    * const magicLinkTokens = await prisma.magicLinkToken.findMany()
+    * ```
+    */
+  get magicLinkToken(): Prisma.MagicLinkTokenDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -652,7 +667,8 @@ export namespace Prisma {
     User: 'User',
     RefreshToken: 'RefreshToken',
     VerificationToken: 'VerificationToken',
-    PasswordResetToken: 'PasswordResetToken'
+    PasswordResetToken: 'PasswordResetToken',
+    MagicLinkToken: 'MagicLinkToken'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -671,7 +687,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "refreshToken" | "verificationToken" | "passwordResetToken"
+      modelProps: "user" | "refreshToken" | "verificationToken" | "passwordResetToken" | "magicLinkToken"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -971,6 +987,80 @@ export namespace Prisma {
           }
         }
       }
+      MagicLinkToken: {
+        payload: Prisma.$MagicLinkTokenPayload<ExtArgs>
+        fields: Prisma.MagicLinkTokenFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MagicLinkTokenFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MagicLinkTokenFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          findFirst: {
+            args: Prisma.MagicLinkTokenFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MagicLinkTokenFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          findMany: {
+            args: Prisma.MagicLinkTokenFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>[]
+          }
+          create: {
+            args: Prisma.MagicLinkTokenCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          createMany: {
+            args: Prisma.MagicLinkTokenCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MagicLinkTokenCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>[]
+          }
+          delete: {
+            args: Prisma.MagicLinkTokenDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          update: {
+            args: Prisma.MagicLinkTokenUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          deleteMany: {
+            args: Prisma.MagicLinkTokenDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MagicLinkTokenUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MagicLinkTokenUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>[]
+          }
+          upsert: {
+            args: Prisma.MagicLinkTokenUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MagicLinkTokenPayload>
+          }
+          aggregate: {
+            args: Prisma.MagicLinkTokenAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMagicLinkToken>
+          }
+          groupBy: {
+            args: Prisma.MagicLinkTokenGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MagicLinkTokenGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MagicLinkTokenCountArgs<ExtArgs>
+            result: $Utils.Optional<MagicLinkTokenCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1071,6 +1161,7 @@ export namespace Prisma {
     refreshToken?: RefreshTokenOmit
     verificationToken?: VerificationTokenOmit
     passwordResetToken?: PasswordResetTokenOmit
+    magicLinkToken?: MagicLinkTokenOmit
   }
 
   /* Types for Logging */
@@ -1154,12 +1245,14 @@ export namespace Prisma {
     refreshTokens: number
     verificationTokens: number
     passwordResetTokens: number
+    magicLinkTokens: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
     verificationTokens?: boolean | UserCountOutputTypeCountVerificationTokensArgs
     passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
+    magicLinkTokens?: boolean | UserCountOutputTypeCountMagicLinkTokensArgs
   }
 
   // Custom InputTypes
@@ -1192,6 +1285,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PasswordResetTokenWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountMagicLinkTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MagicLinkTokenWhereInput
   }
 
 
@@ -1227,6 +1327,8 @@ export namespace Prisma {
     emailVerified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
     failedLoginAttempts: number | null
     accountLockedUntil: Date | null
   }
@@ -1239,6 +1341,8 @@ export namespace Prisma {
     emailVerified: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
     failedLoginAttempts: number | null
     accountLockedUntil: Date | null
   }
@@ -1251,6 +1355,8 @@ export namespace Prisma {
     emailVerified: number
     createdAt: number
     updatedAt: number
+    lastLoginAt: number
+    lastLoginIp: number
     failedLoginAttempts: number
     accountLockedUntil: number
     _all: number
@@ -1273,6 +1379,8 @@ export namespace Prisma {
     emailVerified?: true
     createdAt?: true
     updatedAt?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
     failedLoginAttempts?: true
     accountLockedUntil?: true
   }
@@ -1285,6 +1393,8 @@ export namespace Prisma {
     emailVerified?: true
     createdAt?: true
     updatedAt?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
     failedLoginAttempts?: true
     accountLockedUntil?: true
   }
@@ -1297,6 +1407,8 @@ export namespace Prisma {
     emailVerified?: true
     createdAt?: true
     updatedAt?: true
+    lastLoginAt?: true
+    lastLoginIp?: true
     failedLoginAttempts?: true
     accountLockedUntil?: true
     _all?: true
@@ -1396,6 +1508,8 @@ export namespace Prisma {
     emailVerified: boolean
     createdAt: Date
     updatedAt: Date
+    lastLoginAt: Date | null
+    lastLoginIp: string | null
     failedLoginAttempts: number
     accountLockedUntil: Date | null
     _count: UserCountAggregateOutputType | null
@@ -1427,11 +1541,14 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
     failedLoginAttempts?: boolean
     accountLockedUntil?: boolean
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     verificationTokens?: boolean | User$verificationTokensArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
+    magicLinkTokens?: boolean | User$magicLinkTokensArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1443,6 +1560,8 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
     failedLoginAttempts?: boolean
     accountLockedUntil?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1455,6 +1574,8 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
     failedLoginAttempts?: boolean
     accountLockedUntil?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1467,15 +1588,18 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    lastLoginAt?: boolean
+    lastLoginIp?: boolean
     failedLoginAttempts?: boolean
     accountLockedUntil?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "emailVerified" | "createdAt" | "updatedAt" | "failedLoginAttempts" | "accountLockedUntil", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "emailVerified" | "createdAt" | "updatedAt" | "lastLoginAt" | "lastLoginIp" | "failedLoginAttempts" | "accountLockedUntil", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     verificationTokens?: boolean | User$verificationTokensArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
+    magicLinkTokens?: boolean | User$magicLinkTokensArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1487,6 +1611,7 @@ export namespace Prisma {
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
       verificationTokens: Prisma.$VerificationTokenPayload<ExtArgs>[]
       passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
+      magicLinkTokens: Prisma.$MagicLinkTokenPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1496,6 +1621,8 @@ export namespace Prisma {
       emailVerified: boolean
       createdAt: Date
       updatedAt: Date
+      lastLoginAt: Date | null
+      lastLoginIp: string | null
       failedLoginAttempts: number
       accountLockedUntil: Date | null
     }, ExtArgs["result"]["user"]>
@@ -1895,6 +2022,7 @@ export namespace Prisma {
     refreshTokens<T extends User$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     verificationTokens<T extends User$verificationTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$verificationTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     passwordResetTokens<T extends User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    magicLinkTokens<T extends User$magicLinkTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$magicLinkTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1931,6 +2059,8 @@ export namespace Prisma {
     readonly emailVerified: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly lastLoginAt: FieldRef<"User", 'DateTime'>
+    readonly lastLoginIp: FieldRef<"User", 'String'>
     readonly failedLoginAttempts: FieldRef<"User", 'Int'>
     readonly accountLockedUntil: FieldRef<"User", 'DateTime'>
   }
@@ -2390,6 +2520,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PasswordResetTokenScalarFieldEnum | PasswordResetTokenScalarFieldEnum[]
+  }
+
+  /**
+   * User.magicLinkTokens
+   */
+  export type User$magicLinkTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    where?: MagicLinkTokenWhereInput
+    orderBy?: MagicLinkTokenOrderByWithRelationInput | MagicLinkTokenOrderByWithRelationInput[]
+    cursor?: MagicLinkTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MagicLinkTokenScalarFieldEnum | MagicLinkTokenScalarFieldEnum[]
   }
 
   /**
@@ -5599,6 +5753,1116 @@ export namespace Prisma {
 
 
   /**
+   * Model MagicLinkToken
+   */
+
+  export type AggregateMagicLinkToken = {
+    _count: MagicLinkTokenCountAggregateOutputType | null
+    _min: MagicLinkTokenMinAggregateOutputType | null
+    _max: MagicLinkTokenMaxAggregateOutputType | null
+  }
+
+  export type MagicLinkTokenMinAggregateOutputType = {
+    id: string | null
+    token: string | null
+    userId: string | null
+    expiresAt: Date | null
+    used: boolean | null
+    usedAt: Date | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type MagicLinkTokenMaxAggregateOutputType = {
+    id: string | null
+    token: string | null
+    userId: string | null
+    expiresAt: Date | null
+    used: boolean | null
+    usedAt: Date | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type MagicLinkTokenCountAggregateOutputType = {
+    id: number
+    token: number
+    userId: number
+    expiresAt: number
+    used: number
+    usedAt: number
+    ipAddress: number
+    userAgent: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type MagicLinkTokenMinAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    used?: true
+    usedAt?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type MagicLinkTokenMaxAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    used?: true
+    usedAt?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type MagicLinkTokenCountAggregateInputType = {
+    id?: true
+    token?: true
+    userId?: true
+    expiresAt?: true
+    used?: true
+    usedAt?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type MagicLinkTokenAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MagicLinkToken to aggregate.
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MagicLinkTokens to fetch.
+     */
+    orderBy?: MagicLinkTokenOrderByWithRelationInput | MagicLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MagicLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MagicLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MagicLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MagicLinkTokens
+    **/
+    _count?: true | MagicLinkTokenCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MagicLinkTokenMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MagicLinkTokenMaxAggregateInputType
+  }
+
+  export type GetMagicLinkTokenAggregateType<T extends MagicLinkTokenAggregateArgs> = {
+        [P in keyof T & keyof AggregateMagicLinkToken]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMagicLinkToken[P]>
+      : GetScalarType<T[P], AggregateMagicLinkToken[P]>
+  }
+
+
+
+
+  export type MagicLinkTokenGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MagicLinkTokenWhereInput
+    orderBy?: MagicLinkTokenOrderByWithAggregationInput | MagicLinkTokenOrderByWithAggregationInput[]
+    by: MagicLinkTokenScalarFieldEnum[] | MagicLinkTokenScalarFieldEnum
+    having?: MagicLinkTokenScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MagicLinkTokenCountAggregateInputType | true
+    _min?: MagicLinkTokenMinAggregateInputType
+    _max?: MagicLinkTokenMaxAggregateInputType
+  }
+
+  export type MagicLinkTokenGroupByOutputType = {
+    id: string
+    token: string
+    userId: string
+    expiresAt: Date
+    used: boolean
+    usedAt: Date | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date
+    _count: MagicLinkTokenCountAggregateOutputType | null
+    _min: MagicLinkTokenMinAggregateOutputType | null
+    _max: MagicLinkTokenMaxAggregateOutputType | null
+  }
+
+  type GetMagicLinkTokenGroupByPayload<T extends MagicLinkTokenGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MagicLinkTokenGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MagicLinkTokenGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MagicLinkTokenGroupByOutputType[P]>
+            : GetScalarType<T[P], MagicLinkTokenGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MagicLinkTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    used?: boolean
+    usedAt?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["magicLinkToken"]>
+
+  export type MagicLinkTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    used?: boolean
+    usedAt?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["magicLinkToken"]>
+
+  export type MagicLinkTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    used?: boolean
+    usedAt?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["magicLinkToken"]>
+
+  export type MagicLinkTokenSelectScalar = {
+    id?: boolean
+    token?: boolean
+    userId?: boolean
+    expiresAt?: boolean
+    used?: boolean
+    usedAt?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+  }
+
+  export type MagicLinkTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "userId" | "expiresAt" | "used" | "usedAt" | "ipAddress" | "userAgent" | "createdAt", ExtArgs["result"]["magicLinkToken"]>
+  export type MagicLinkTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MagicLinkTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MagicLinkTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MagicLinkTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MagicLinkToken"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      token: string
+      userId: string
+      expiresAt: Date
+      used: boolean
+      usedAt: Date | null
+      ipAddress: string | null
+      userAgent: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["magicLinkToken"]>
+    composites: {}
+  }
+
+  type MagicLinkTokenGetPayload<S extends boolean | null | undefined | MagicLinkTokenDefaultArgs> = $Result.GetResult<Prisma.$MagicLinkTokenPayload, S>
+
+  type MagicLinkTokenCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MagicLinkTokenFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MagicLinkTokenCountAggregateInputType | true
+    }
+
+  export interface MagicLinkTokenDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MagicLinkToken'], meta: { name: 'MagicLinkToken' } }
+    /**
+     * Find zero or one MagicLinkToken that matches the filter.
+     * @param {MagicLinkTokenFindUniqueArgs} args - Arguments to find a MagicLinkToken
+     * @example
+     * // Get one MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MagicLinkTokenFindUniqueArgs>(args: SelectSubset<T, MagicLinkTokenFindUniqueArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MagicLinkToken that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MagicLinkTokenFindUniqueOrThrowArgs} args - Arguments to find a MagicLinkToken
+     * @example
+     * // Get one MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MagicLinkTokenFindUniqueOrThrowArgs>(args: SelectSubset<T, MagicLinkTokenFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MagicLinkToken that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenFindFirstArgs} args - Arguments to find a MagicLinkToken
+     * @example
+     * // Get one MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MagicLinkTokenFindFirstArgs>(args?: SelectSubset<T, MagicLinkTokenFindFirstArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MagicLinkToken that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenFindFirstOrThrowArgs} args - Arguments to find a MagicLinkToken
+     * @example
+     * // Get one MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MagicLinkTokenFindFirstOrThrowArgs>(args?: SelectSubset<T, MagicLinkTokenFindFirstOrThrowArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MagicLinkTokens that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MagicLinkTokens
+     * const magicLinkTokens = await prisma.magicLinkToken.findMany()
+     * 
+     * // Get first 10 MagicLinkTokens
+     * const magicLinkTokens = await prisma.magicLinkToken.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const magicLinkTokenWithIdOnly = await prisma.magicLinkToken.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MagicLinkTokenFindManyArgs>(args?: SelectSubset<T, MagicLinkTokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MagicLinkToken.
+     * @param {MagicLinkTokenCreateArgs} args - Arguments to create a MagicLinkToken.
+     * @example
+     * // Create one MagicLinkToken
+     * const MagicLinkToken = await prisma.magicLinkToken.create({
+     *   data: {
+     *     // ... data to create a MagicLinkToken
+     *   }
+     * })
+     * 
+     */
+    create<T extends MagicLinkTokenCreateArgs>(args: SelectSubset<T, MagicLinkTokenCreateArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MagicLinkTokens.
+     * @param {MagicLinkTokenCreateManyArgs} args - Arguments to create many MagicLinkTokens.
+     * @example
+     * // Create many MagicLinkTokens
+     * const magicLinkToken = await prisma.magicLinkToken.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MagicLinkTokenCreateManyArgs>(args?: SelectSubset<T, MagicLinkTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MagicLinkTokens and returns the data saved in the database.
+     * @param {MagicLinkTokenCreateManyAndReturnArgs} args - Arguments to create many MagicLinkTokens.
+     * @example
+     * // Create many MagicLinkTokens
+     * const magicLinkToken = await prisma.magicLinkToken.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MagicLinkTokens and only return the `id`
+     * const magicLinkTokenWithIdOnly = await prisma.magicLinkToken.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MagicLinkTokenCreateManyAndReturnArgs>(args?: SelectSubset<T, MagicLinkTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MagicLinkToken.
+     * @param {MagicLinkTokenDeleteArgs} args - Arguments to delete one MagicLinkToken.
+     * @example
+     * // Delete one MagicLinkToken
+     * const MagicLinkToken = await prisma.magicLinkToken.delete({
+     *   where: {
+     *     // ... filter to delete one MagicLinkToken
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MagicLinkTokenDeleteArgs>(args: SelectSubset<T, MagicLinkTokenDeleteArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MagicLinkToken.
+     * @param {MagicLinkTokenUpdateArgs} args - Arguments to update one MagicLinkToken.
+     * @example
+     * // Update one MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MagicLinkTokenUpdateArgs>(args: SelectSubset<T, MagicLinkTokenUpdateArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MagicLinkTokens.
+     * @param {MagicLinkTokenDeleteManyArgs} args - Arguments to filter MagicLinkTokens to delete.
+     * @example
+     * // Delete a few MagicLinkTokens
+     * const { count } = await prisma.magicLinkToken.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MagicLinkTokenDeleteManyArgs>(args?: SelectSubset<T, MagicLinkTokenDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MagicLinkTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MagicLinkTokens
+     * const magicLinkToken = await prisma.magicLinkToken.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MagicLinkTokenUpdateManyArgs>(args: SelectSubset<T, MagicLinkTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MagicLinkTokens and returns the data updated in the database.
+     * @param {MagicLinkTokenUpdateManyAndReturnArgs} args - Arguments to update many MagicLinkTokens.
+     * @example
+     * // Update many MagicLinkTokens
+     * const magicLinkToken = await prisma.magicLinkToken.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MagicLinkTokens and only return the `id`
+     * const magicLinkTokenWithIdOnly = await prisma.magicLinkToken.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MagicLinkTokenUpdateManyAndReturnArgs>(args: SelectSubset<T, MagicLinkTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MagicLinkToken.
+     * @param {MagicLinkTokenUpsertArgs} args - Arguments to update or create a MagicLinkToken.
+     * @example
+     * // Update or create a MagicLinkToken
+     * const magicLinkToken = await prisma.magicLinkToken.upsert({
+     *   create: {
+     *     // ... data to create a MagicLinkToken
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MagicLinkToken we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MagicLinkTokenUpsertArgs>(args: SelectSubset<T, MagicLinkTokenUpsertArgs<ExtArgs>>): Prisma__MagicLinkTokenClient<$Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MagicLinkTokens.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenCountArgs} args - Arguments to filter MagicLinkTokens to count.
+     * @example
+     * // Count the number of MagicLinkTokens
+     * const count = await prisma.magicLinkToken.count({
+     *   where: {
+     *     // ... the filter for the MagicLinkTokens we want to count
+     *   }
+     * })
+    **/
+    count<T extends MagicLinkTokenCountArgs>(
+      args?: Subset<T, MagicLinkTokenCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MagicLinkTokenCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MagicLinkToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MagicLinkTokenAggregateArgs>(args: Subset<T, MagicLinkTokenAggregateArgs>): Prisma.PrismaPromise<GetMagicLinkTokenAggregateType<T>>
+
+    /**
+     * Group by MagicLinkToken.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MagicLinkTokenGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MagicLinkTokenGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MagicLinkTokenGroupByArgs['orderBy'] }
+        : { orderBy?: MagicLinkTokenGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MagicLinkTokenGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMagicLinkTokenGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MagicLinkToken model
+   */
+  readonly fields: MagicLinkTokenFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MagicLinkToken.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MagicLinkTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MagicLinkToken model
+   */
+  interface MagicLinkTokenFieldRefs {
+    readonly id: FieldRef<"MagicLinkToken", 'String'>
+    readonly token: FieldRef<"MagicLinkToken", 'String'>
+    readonly userId: FieldRef<"MagicLinkToken", 'String'>
+    readonly expiresAt: FieldRef<"MagicLinkToken", 'DateTime'>
+    readonly used: FieldRef<"MagicLinkToken", 'Boolean'>
+    readonly usedAt: FieldRef<"MagicLinkToken", 'DateTime'>
+    readonly ipAddress: FieldRef<"MagicLinkToken", 'String'>
+    readonly userAgent: FieldRef<"MagicLinkToken", 'String'>
+    readonly createdAt: FieldRef<"MagicLinkToken", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MagicLinkToken findUnique
+   */
+  export type MagicLinkTokenFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MagicLinkToken to fetch.
+     */
+    where: MagicLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * MagicLinkToken findUniqueOrThrow
+   */
+  export type MagicLinkTokenFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MagicLinkToken to fetch.
+     */
+    where: MagicLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * MagicLinkToken findFirst
+   */
+  export type MagicLinkTokenFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MagicLinkToken to fetch.
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MagicLinkTokens to fetch.
+     */
+    orderBy?: MagicLinkTokenOrderByWithRelationInput | MagicLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MagicLinkTokens.
+     */
+    cursor?: MagicLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MagicLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MagicLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MagicLinkTokens.
+     */
+    distinct?: MagicLinkTokenScalarFieldEnum | MagicLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MagicLinkToken findFirstOrThrow
+   */
+  export type MagicLinkTokenFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MagicLinkToken to fetch.
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MagicLinkTokens to fetch.
+     */
+    orderBy?: MagicLinkTokenOrderByWithRelationInput | MagicLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MagicLinkTokens.
+     */
+    cursor?: MagicLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MagicLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MagicLinkTokens.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MagicLinkTokens.
+     */
+    distinct?: MagicLinkTokenScalarFieldEnum | MagicLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MagicLinkToken findMany
+   */
+  export type MagicLinkTokenFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter, which MagicLinkTokens to fetch.
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MagicLinkTokens to fetch.
+     */
+    orderBy?: MagicLinkTokenOrderByWithRelationInput | MagicLinkTokenOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MagicLinkTokens.
+     */
+    cursor?: MagicLinkTokenWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MagicLinkTokens from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MagicLinkTokens.
+     */
+    skip?: number
+    distinct?: MagicLinkTokenScalarFieldEnum | MagicLinkTokenScalarFieldEnum[]
+  }
+
+  /**
+   * MagicLinkToken create
+   */
+  export type MagicLinkTokenCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MagicLinkToken.
+     */
+    data: XOR<MagicLinkTokenCreateInput, MagicLinkTokenUncheckedCreateInput>
+  }
+
+  /**
+   * MagicLinkToken createMany
+   */
+  export type MagicLinkTokenCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MagicLinkTokens.
+     */
+    data: MagicLinkTokenCreateManyInput | MagicLinkTokenCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MagicLinkToken createManyAndReturn
+   */
+  export type MagicLinkTokenCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * The data used to create many MagicLinkTokens.
+     */
+    data: MagicLinkTokenCreateManyInput | MagicLinkTokenCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MagicLinkToken update
+   */
+  export type MagicLinkTokenUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MagicLinkToken.
+     */
+    data: XOR<MagicLinkTokenUpdateInput, MagicLinkTokenUncheckedUpdateInput>
+    /**
+     * Choose, which MagicLinkToken to update.
+     */
+    where: MagicLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * MagicLinkToken updateMany
+   */
+  export type MagicLinkTokenUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MagicLinkTokens.
+     */
+    data: XOR<MagicLinkTokenUpdateManyMutationInput, MagicLinkTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which MagicLinkTokens to update
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * Limit how many MagicLinkTokens to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MagicLinkToken updateManyAndReturn
+   */
+  export type MagicLinkTokenUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * The data used to update MagicLinkTokens.
+     */
+    data: XOR<MagicLinkTokenUpdateManyMutationInput, MagicLinkTokenUncheckedUpdateManyInput>
+    /**
+     * Filter which MagicLinkTokens to update
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * Limit how many MagicLinkTokens to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MagicLinkToken upsert
+   */
+  export type MagicLinkTokenUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MagicLinkToken to update in case it exists.
+     */
+    where: MagicLinkTokenWhereUniqueInput
+    /**
+     * In case the MagicLinkToken found by the `where` argument doesn't exist, create a new MagicLinkToken with this data.
+     */
+    create: XOR<MagicLinkTokenCreateInput, MagicLinkTokenUncheckedCreateInput>
+    /**
+     * In case the MagicLinkToken was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MagicLinkTokenUpdateInput, MagicLinkTokenUncheckedUpdateInput>
+  }
+
+  /**
+   * MagicLinkToken delete
+   */
+  export type MagicLinkTokenDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+    /**
+     * Filter which MagicLinkToken to delete.
+     */
+    where: MagicLinkTokenWhereUniqueInput
+  }
+
+  /**
+   * MagicLinkToken deleteMany
+   */
+  export type MagicLinkTokenDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MagicLinkTokens to delete
+     */
+    where?: MagicLinkTokenWhereInput
+    /**
+     * Limit how many MagicLinkTokens to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MagicLinkToken without action
+   */
+  export type MagicLinkTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MagicLinkToken
+     */
+    select?: MagicLinkTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MagicLinkToken
+     */
+    omit?: MagicLinkTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MagicLinkTokenInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -5620,6 +6884,8 @@ export namespace Prisma {
     emailVerified: 'emailVerified',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
+    lastLoginAt: 'lastLoginAt',
+    lastLoginIp: 'lastLoginIp',
     failedLoginAttempts: 'failedLoginAttempts',
     accountLockedUntil: 'accountLockedUntil'
   };
@@ -5661,6 +6927,21 @@ export namespace Prisma {
   export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
+  export const MagicLinkTokenScalarFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId',
+    expiresAt: 'expiresAt',
+    used: 'used',
+    usedAt: 'usedAt',
+    ipAddress: 'ipAddress',
+    userAgent: 'userAgent',
+    createdAt: 'createdAt'
+  };
+
+  export type MagicLinkTokenScalarFieldEnum = (typeof MagicLinkTokenScalarFieldEnum)[keyof typeof MagicLinkTokenScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -5688,7 +6969,8 @@ export namespace Prisma {
   export const UserOrderByRelevanceFieldEnum: {
     id: 'id',
     email: 'email',
-    password: 'password'
+    password: 'password',
+    lastLoginIp: 'lastLoginIp'
   };
 
   export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
@@ -5719,6 +7001,17 @@ export namespace Prisma {
   };
 
   export type PasswordResetTokenOrderByRelevanceFieldEnum = (typeof PasswordResetTokenOrderByRelevanceFieldEnum)[keyof typeof PasswordResetTokenOrderByRelevanceFieldEnum]
+
+
+  export const MagicLinkTokenOrderByRelevanceFieldEnum: {
+    id: 'id',
+    token: 'token',
+    userId: 'userId',
+    ipAddress: 'ipAddress',
+    userAgent: 'userAgent'
+  };
+
+  export type MagicLinkTokenOrderByRelevanceFieldEnum = (typeof MagicLinkTokenOrderByRelevanceFieldEnum)[keyof typeof MagicLinkTokenOrderByRelevanceFieldEnum]
 
 
   /**
@@ -5817,11 +7110,14 @@ export namespace Prisma {
     emailVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableFilter<"User"> | string | null
     failedLoginAttempts?: IntFilter<"User"> | number
     accountLockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
     refreshTokens?: RefreshTokenListRelationFilter
     verificationTokens?: VerificationTokenListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
+    magicLinkTokens?: MagicLinkTokenListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -5832,11 +7128,14 @@ export namespace Prisma {
     emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    lastLoginIp?: SortOrderInput | SortOrder
     failedLoginAttempts?: SortOrder
     accountLockedUntil?: SortOrderInput | SortOrder
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
     verificationTokens?: VerificationTokenOrderByRelationAggregateInput
     passwordResetTokens?: PasswordResetTokenOrderByRelationAggregateInput
+    magicLinkTokens?: MagicLinkTokenOrderByRelationAggregateInput
     _relevance?: UserOrderByRelevanceInput
   }
 
@@ -5851,11 +7150,14 @@ export namespace Prisma {
     emailVerified?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    lastLoginAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableFilter<"User"> | string | null
     failedLoginAttempts?: IntFilter<"User"> | number
     accountLockedUntil?: DateTimeNullableFilter<"User"> | Date | string | null
     refreshTokens?: RefreshTokenListRelationFilter
     verificationTokens?: VerificationTokenListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
+    magicLinkTokens?: MagicLinkTokenListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -5866,6 +7168,8 @@ export namespace Prisma {
     emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastLoginAt?: SortOrderInput | SortOrder
+    lastLoginIp?: SortOrderInput | SortOrder
     failedLoginAttempts?: SortOrder
     accountLockedUntil?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -5886,6 +7190,8 @@ export namespace Prisma {
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    lastLoginAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    lastLoginIp?: StringNullableWithAggregatesFilter<"User"> | string | null
     failedLoginAttempts?: IntWithAggregatesFilter<"User"> | number
     accountLockedUntil?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   }
@@ -6063,6 +7369,82 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
   }
 
+  export type MagicLinkTokenWhereInput = {
+    AND?: MagicLinkTokenWhereInput | MagicLinkTokenWhereInput[]
+    OR?: MagicLinkTokenWhereInput[]
+    NOT?: MagicLinkTokenWhereInput | MagicLinkTokenWhereInput[]
+    id?: StringFilter<"MagicLinkToken"> | string
+    token?: StringFilter<"MagicLinkToken"> | string
+    userId?: StringFilter<"MagicLinkToken"> | string
+    expiresAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+    used?: BoolFilter<"MagicLinkToken"> | boolean
+    usedAt?: DateTimeNullableFilter<"MagicLinkToken"> | Date | string | null
+    ipAddress?: StringNullableFilter<"MagicLinkToken"> | string | null
+    userAgent?: StringNullableFilter<"MagicLinkToken"> | string | null
+    createdAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type MagicLinkTokenOrderByWithRelationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    used?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    _relevance?: MagicLinkTokenOrderByRelevanceInput
+  }
+
+  export type MagicLinkTokenWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    token?: string
+    AND?: MagicLinkTokenWhereInput | MagicLinkTokenWhereInput[]
+    OR?: MagicLinkTokenWhereInput[]
+    NOT?: MagicLinkTokenWhereInput | MagicLinkTokenWhereInput[]
+    userId?: StringFilter<"MagicLinkToken"> | string
+    expiresAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+    used?: BoolFilter<"MagicLinkToken"> | boolean
+    usedAt?: DateTimeNullableFilter<"MagicLinkToken"> | Date | string | null
+    ipAddress?: StringNullableFilter<"MagicLinkToken"> | string | null
+    userAgent?: StringNullableFilter<"MagicLinkToken"> | string | null
+    createdAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "token">
+
+  export type MagicLinkTokenOrderByWithAggregationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    used?: SortOrder
+    usedAt?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: MagicLinkTokenCountOrderByAggregateInput
+    _max?: MagicLinkTokenMaxOrderByAggregateInput
+    _min?: MagicLinkTokenMinOrderByAggregateInput
+  }
+
+  export type MagicLinkTokenScalarWhereWithAggregatesInput = {
+    AND?: MagicLinkTokenScalarWhereWithAggregatesInput | MagicLinkTokenScalarWhereWithAggregatesInput[]
+    OR?: MagicLinkTokenScalarWhereWithAggregatesInput[]
+    NOT?: MagicLinkTokenScalarWhereWithAggregatesInput | MagicLinkTokenScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MagicLinkToken"> | string
+    token?: StringWithAggregatesFilter<"MagicLinkToken"> | string
+    userId?: StringWithAggregatesFilter<"MagicLinkToken"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"MagicLinkToken"> | Date | string
+    used?: BoolWithAggregatesFilter<"MagicLinkToken"> | boolean
+    usedAt?: DateTimeNullableWithAggregatesFilter<"MagicLinkToken"> | Date | string | null
+    ipAddress?: StringNullableWithAggregatesFilter<"MagicLinkToken"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"MagicLinkToken"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"MagicLinkToken"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -6071,11 +7453,14 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     verificationTokens?: VerificationTokenCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6086,11 +7471,14 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     verificationTokens?: VerificationTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -6101,11 +7489,14 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     verificationTokens?: VerificationTokenUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6116,11 +7507,14 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     verificationTokens?: VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6131,6 +7525,8 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
   }
@@ -6143,6 +7539,8 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -6155,6 +7553,8 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -6331,6 +7731,89 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MagicLinkTokenCreateInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutMagicLinkTokensInput
+  }
+
+  export type MagicLinkTokenUncheckedCreateInput = {
+    id?: string
+    token: string
+    userId: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type MagicLinkTokenUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMagicLinkTokensNestedInput
+  }
+
+  export type MagicLinkTokenUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MagicLinkTokenCreateManyInput = {
+    id?: string
+    token: string
+    userId: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type MagicLinkTokenUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MagicLinkTokenUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -6370,17 +7853,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -6390,6 +7862,33 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type RefreshTokenListRelationFilter = {
@@ -6410,6 +7909,12 @@ export namespace Prisma {
     none?: PasswordResetTokenWhereInput
   }
 
+  export type MagicLinkTokenListRelationFilter = {
+    every?: MagicLinkTokenWhereInput
+    some?: MagicLinkTokenWhereInput
+    none?: MagicLinkTokenWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -6427,6 +7932,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type MagicLinkTokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserOrderByRelevanceInput = {
     fields: UserOrderByRelevanceFieldEnum | UserOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -6441,6 +7950,8 @@ export namespace Prisma {
     emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
     failedLoginAttempts?: SortOrder
     accountLockedUntil?: SortOrder
   }
@@ -6457,6 +7968,8 @@ export namespace Prisma {
     emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
     failedLoginAttempts?: SortOrder
     accountLockedUntil?: SortOrder
   }
@@ -6469,6 +7982,8 @@ export namespace Prisma {
     emailVerified?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    lastLoginAt?: SortOrder
+    lastLoginIp?: SortOrder
     failedLoginAttempts?: SortOrder
     accountLockedUntil?: SortOrder
   }
@@ -6528,6 +8043,39 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -6542,20 +8090,6 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type UserScalarRelationFilter = {
@@ -6656,6 +8190,48 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type MagicLinkTokenOrderByRelevanceInput = {
+    fields: MagicLinkTokenOrderByRelevanceFieldEnum | MagicLinkTokenOrderByRelevanceFieldEnum[]
+    sort: SortOrder
+    search: string
+  }
+
+  export type MagicLinkTokenCountOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    used?: SortOrder
+    usedAt?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MagicLinkTokenMaxOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    used?: SortOrder
+    usedAt?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MagicLinkTokenMinOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    userId?: SortOrder
+    expiresAt?: SortOrder
+    used?: SortOrder
+    usedAt?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type RefreshTokenCreateNestedManyWithoutUserInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
@@ -6675,6 +8251,13 @@ export namespace Prisma {
     connectOrCreate?: PasswordResetTokenCreateOrConnectWithoutUserInput | PasswordResetTokenCreateOrConnectWithoutUserInput[]
     createMany?: PasswordResetTokenCreateManyUserInputEnvelope
     connect?: PasswordResetTokenWhereUniqueInput | PasswordResetTokenWhereUniqueInput[]
+  }
+
+  export type MagicLinkTokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput> | MagicLinkTokenCreateWithoutUserInput[] | MagicLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MagicLinkTokenCreateOrConnectWithoutUserInput | MagicLinkTokenCreateOrConnectWithoutUserInput[]
+    createMany?: MagicLinkTokenCreateManyUserInputEnvelope
+    connect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
   }
 
   export type RefreshTokenUncheckedCreateNestedManyWithoutUserInput = {
@@ -6698,6 +8281,13 @@ export namespace Prisma {
     connect?: PasswordResetTokenWhereUniqueInput | PasswordResetTokenWhereUniqueInput[]
   }
 
+  export type MagicLinkTokenUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput> | MagicLinkTokenCreateWithoutUserInput[] | MagicLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MagicLinkTokenCreateOrConnectWithoutUserInput | MagicLinkTokenCreateOrConnectWithoutUserInput[]
+    createMany?: MagicLinkTokenCreateManyUserInputEnvelope
+    connect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -6714,16 +8304,20 @@ export namespace Prisma {
     set?: Date | string
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type RefreshTokenUpdateManyWithoutUserNestedInput = {
@@ -6768,6 +8362,20 @@ export namespace Prisma {
     deleteMany?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
   }
 
+  export type MagicLinkTokenUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput> | MagicLinkTokenCreateWithoutUserInput[] | MagicLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MagicLinkTokenCreateOrConnectWithoutUserInput | MagicLinkTokenCreateOrConnectWithoutUserInput[]
+    upsert?: MagicLinkTokenUpsertWithWhereUniqueWithoutUserInput | MagicLinkTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MagicLinkTokenCreateManyUserInputEnvelope
+    set?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    disconnect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    delete?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    connect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    update?: MagicLinkTokenUpdateWithWhereUniqueWithoutUserInput | MagicLinkTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MagicLinkTokenUpdateManyWithWhereWithoutUserInput | MagicLinkTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MagicLinkTokenScalarWhereInput | MagicLinkTokenScalarWhereInput[]
+  }
+
   export type RefreshTokenUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
@@ -6808,6 +8416,20 @@ export namespace Prisma {
     update?: PasswordResetTokenUpdateWithWhereUniqueWithoutUserInput | PasswordResetTokenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PasswordResetTokenUpdateManyWithWhereWithoutUserInput | PasswordResetTokenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
+  }
+
+  export type MagicLinkTokenUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput> | MagicLinkTokenCreateWithoutUserInput[] | MagicLinkTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: MagicLinkTokenCreateOrConnectWithoutUserInput | MagicLinkTokenCreateOrConnectWithoutUserInput[]
+    upsert?: MagicLinkTokenUpsertWithWhereUniqueWithoutUserInput | MagicLinkTokenUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: MagicLinkTokenCreateManyUserInputEnvelope
+    set?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    disconnect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    delete?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    connect?: MagicLinkTokenWhereUniqueInput | MagicLinkTokenWhereUniqueInput[]
+    update?: MagicLinkTokenUpdateWithWhereUniqueWithoutUserInput | MagicLinkTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: MagicLinkTokenUpdateManyWithWhereWithoutUserInput | MagicLinkTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: MagicLinkTokenScalarWhereInput | MagicLinkTokenScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutRefreshTokensInput = {
@@ -6852,6 +8474,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, UserUpdateWithoutPasswordResetTokensInput>, UserUncheckedUpdateWithoutPasswordResetTokensInput>
   }
 
+  export type UserCreateNestedOneWithoutMagicLinkTokensInput = {
+    create?: XOR<UserCreateWithoutMagicLinkTokensInput, UserUncheckedCreateWithoutMagicLinkTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMagicLinkTokensInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutMagicLinkTokensNestedInput = {
+    create?: XOR<UserCreateWithoutMagicLinkTokensInput, UserUncheckedCreateWithoutMagicLinkTokensInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMagicLinkTokensInput
+    upsert?: UserUpsertWithoutMagicLinkTokensInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMagicLinkTokensInput, UserUpdateWithoutMagicLinkTokensInput>, UserUncheckedUpdateWithoutMagicLinkTokensInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -6890,17 +8526,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -6910,6 +8535,32 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -6962,6 +8613,49 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    search?: string
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -6987,31 +8681,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type RefreshTokenCreateWithoutUserInput = {
@@ -7085,6 +8754,38 @@ export namespace Prisma {
 
   export type PasswordResetTokenCreateManyUserInputEnvelope = {
     data: PasswordResetTokenCreateManyUserInput | PasswordResetTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type MagicLinkTokenCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type MagicLinkTokenUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type MagicLinkTokenCreateOrConnectWithoutUserInput = {
+    where: MagicLinkTokenWhereUniqueInput
+    create: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type MagicLinkTokenCreateManyUserInputEnvelope = {
+    data: MagicLinkTokenCreateManyUserInput | MagicLinkTokenCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -7170,6 +8871,37 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
   }
 
+  export type MagicLinkTokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: MagicLinkTokenWhereUniqueInput
+    update: XOR<MagicLinkTokenUpdateWithoutUserInput, MagicLinkTokenUncheckedUpdateWithoutUserInput>
+    create: XOR<MagicLinkTokenCreateWithoutUserInput, MagicLinkTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type MagicLinkTokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: MagicLinkTokenWhereUniqueInput
+    data: XOR<MagicLinkTokenUpdateWithoutUserInput, MagicLinkTokenUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MagicLinkTokenUpdateManyWithWhereWithoutUserInput = {
+    where: MagicLinkTokenScalarWhereInput
+    data: XOR<MagicLinkTokenUpdateManyMutationInput, MagicLinkTokenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type MagicLinkTokenScalarWhereInput = {
+    AND?: MagicLinkTokenScalarWhereInput | MagicLinkTokenScalarWhereInput[]
+    OR?: MagicLinkTokenScalarWhereInput[]
+    NOT?: MagicLinkTokenScalarWhereInput | MagicLinkTokenScalarWhereInput[]
+    id?: StringFilter<"MagicLinkToken"> | string
+    token?: StringFilter<"MagicLinkToken"> | string
+    userId?: StringFilter<"MagicLinkToken"> | string
+    expiresAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+    used?: BoolFilter<"MagicLinkToken"> | boolean
+    usedAt?: DateTimeNullableFilter<"MagicLinkToken"> | Date | string | null
+    ipAddress?: StringNullableFilter<"MagicLinkToken"> | string | null
+    userAgent?: StringNullableFilter<"MagicLinkToken"> | string | null
+    createdAt?: DateTimeFilter<"MagicLinkToken"> | Date | string
+  }
+
   export type UserCreateWithoutRefreshTokensInput = {
     id?: string
     email: string
@@ -7178,10 +8910,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     verificationTokens?: VerificationTokenCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -7192,10 +8927,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     verificationTokens?: VerificationTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -7222,10 +8960,13 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verificationTokens?: VerificationTokenUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -7236,10 +8977,13 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verificationTokens?: VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutVerificationTokensInput = {
@@ -7250,10 +8994,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutVerificationTokensInput = {
@@ -7264,10 +9011,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutVerificationTokensInput = {
@@ -7294,10 +9044,13 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVerificationTokensInput = {
@@ -7308,10 +9061,13 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPasswordResetTokensInput = {
@@ -7322,10 +9078,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
     verificationTokens?: VerificationTokenCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -7336,10 +9095,13 @@ export namespace Prisma {
     emailVerified?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
     failedLoginAttempts?: number
     accountLockedUntil?: Date | string | null
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
     verificationTokens?: VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+    magicLinkTokens?: MagicLinkTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -7366,10 +9128,13 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
     verificationTokens?: VerificationTokenUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -7380,10 +9145,97 @@ export namespace Prisma {
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
     failedLoginAttempts?: IntFieldUpdateOperationsInput | number
     accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
     verificationTokens?: VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+    magicLinkTokens?: MagicLinkTokenUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutMagicLinkTokensInput = {
+    id?: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    failedLoginAttempts?: number
+    accountLockedUntil?: Date | string | null
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    verificationTokens?: VerificationTokenCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMagicLinkTokensInput = {
+    id?: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    emailVerified?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastLoginAt?: Date | string | null
+    lastLoginIp?: string | null
+    failedLoginAttempts?: number
+    accountLockedUntil?: Date | string | null
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    verificationTokens?: VerificationTokenUncheckedCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMagicLinkTokensInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMagicLinkTokensInput, UserUncheckedCreateWithoutMagicLinkTokensInput>
+  }
+
+  export type UserUpsertWithoutMagicLinkTokensInput = {
+    update: XOR<UserUpdateWithoutMagicLinkTokensInput, UserUncheckedUpdateWithoutMagicLinkTokensInput>
+    create: XOR<UserCreateWithoutMagicLinkTokensInput, UserUncheckedCreateWithoutMagicLinkTokensInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMagicLinkTokensInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMagicLinkTokensInput, UserUncheckedUpdateWithoutMagicLinkTokensInput>
+  }
+
+  export type UserUpdateWithoutMagicLinkTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    verificationTokens?: VerificationTokenUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMagicLinkTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastLoginIp?: NullableStringFieldUpdateOperationsInput | string | null
+    failedLoginAttempts?: IntFieldUpdateOperationsInput | number
+    accountLockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    verificationTokens?: VerificationTokenUncheckedUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RefreshTokenCreateManyUserInput = {
@@ -7405,6 +9257,17 @@ export namespace Prisma {
     token: string
     expiresAt: Date | string
     used?: boolean
+    createdAt?: Date | string
+  }
+
+  export type MagicLinkTokenCreateManyUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    used?: boolean
+    usedAt?: Date | string | null
+    ipAddress?: string | null
+    userAgent?: string | null
     createdAt?: Date | string
   }
 
@@ -7471,6 +9334,39 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MagicLinkTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MagicLinkTokenUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MagicLinkTokenUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    used?: BoolFieldUpdateOperationsInput | boolean
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

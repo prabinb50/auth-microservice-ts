@@ -5,6 +5,7 @@ import {
   sendPasswordResetEmail,
   resetPassword,
   resendVerificationEmail,
+  sendMagicLinkEmail,
 } from '../services/emailService';
 import logger from '../utils/logger';
 
@@ -128,6 +129,31 @@ export const handleResendVerification = async (req: Request, res: Response) => {
     });
     return res.status(400).json({ 
       message: 'failed to resend verification email', 
+      error: error.message 
+    });
+  }
+};
+
+// send magic login link
+export const handleSendMagicLink = async (req: Request, res: Response) => {
+  try {
+    const { userId, email, ipAddress, userAgent } = req.body;
+
+    logger.info('sending magic login link', { userId, email });
+
+    const result = await sendMagicLinkEmail(userId, email, ipAddress, userAgent);
+    
+    logger.info('magic login link sent successfully', { userId, email });
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    logger.error('send magic link error', { 
+      error: error.message,
+      userId: req.body.userId,
+      email: req.body.email 
+    });
+    return res.status(500).json({ 
+      message: 'failed to send magic login link', 
       error: error.message 
     });
   }

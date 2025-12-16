@@ -33,3 +33,11 @@ export const resetPasswordSchema = z.object({
 export const resendVerificationSchema = z.object({
   email: z.string().email({ message: 'invalid email format' }).trim(),
 });
+
+// send magic login link schema
+export const sendMagicLinkSchema = z.object({
+  userId: z.string().uuid({ message: 'invalid user id format' }),
+  email: z.string().email({ message: 'invalid email format' }).trim(),
+  ipAddress: z.string().min(1, { message: 'ip address is required' }),
+  userAgent: z.string().min(1, { message: 'user agent is required' }),
+});
