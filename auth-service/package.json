@@ -12,7 +12,8 @@
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "cleanup:sessions": "tsx scripts/cleanupSessions.ts",
-    "cleanup:audit": "tsx scripts/cleanupAuditLogs.ts"
+    "cleanup:audit": "tsx scripts/cleanupAuditLogs.ts",
+    "cleanup:all": "npm run cleanup:sessions && npm run cleanup:audit"
   },
   "author": "",
   "license": "ISC",

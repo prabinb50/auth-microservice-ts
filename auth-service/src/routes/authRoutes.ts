@@ -18,9 +18,17 @@ import {
   logoutOtherDevices,
   logoutAllDevices,
 } from "../controllers/sessionController";
+import {
+  handleDataExport,
+  handleAccountAnonymization,
+  handlePermanentDeletion,
+  handleEmailUpdate,
+  handleDataRetentionInfo,
+} from "../controllers/gdprController";
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
 import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
+import { updateEmailSchema, anonymizationSchema, permanentDeletionSchema } from "../validators/gdprValidators";
 import { loginRateLimiter, registerRateLimiter } from "../middlewares/loginRateLimiter";
 import { getAdminActionsHandler, getAllAuditLogsHandler, getMyAuditLogs } from "../controllers/auditController";
 
@@ -45,6 +53,12 @@ router.post("/sessions/logout-all-devices", authenticate, logoutAllDevices);
 // audit log routes (authenticated users - own logs)
 router.get("/audit/me", authenticate, getMyAuditLogs);
 
+// gdpr routes (authenticated users)
+router.get("/gdpr/export", authenticate, handleDataExport);
+router.post("/gdpr/anonymize", authenticate, validate(anonymizationSchema), handleAccountAnonymization);
+router.patch("/gdpr/update-email", authenticate, validate(updateEmailSchema), handleEmailUpdate);
+router.get("/gdpr/retention-info", authenticate, handleDataRetentionInfo);
+
 // admin-only routes
 router.get("/admin/users", authenticate, requireAdmin, listAllUsers);
 router.patch("/admin/change-role", authenticate, requireAdmin, validate(updateRoleSchema), changeUserRole);
@@ -55,5 +69,8 @@ router.delete("/admin/users/all", authenticate, requireAdmin, deleteAllUsersHand
 // admin audit log routes
 router.get("/admin/audit", authenticate, requireAdmin, getAllAuditLogsHandler);
 router.get("/admin/audit/admin-actions", authenticate, requireAdmin, getAdminActionsHandler);
+
+// admin gdpr routes
+router.delete("/admin/gdpr/permanently-delete/:userId", authenticate, requireAdmin, validate(permanentDeletionSchema), handlePermanentDeletion);
 
 export default router;

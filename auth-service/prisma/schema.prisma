@@ -35,6 +35,10 @@ enum AuditAction {
   LOGIN_FAILED
   VERIFICATION_EMAIL_SENT
   RESET_EMAIL_SENT
+  USER_DATA_EXPORTED         // gdpr: data export
+  USER_DATA_ANONYMIZED       // gdpr: anonymization
+  USER_PERMANENTLY_DELETED   // gdpr: permanent deletion
+  EMAIL_UPDATED              // gdpr: rectification
 }
 
 model User {

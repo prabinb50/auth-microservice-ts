@@ -2,7 +2,7 @@ import prisma from '../utils/prisma';
 import logger from '../utils/logger';
 import { Request } from 'express';
 
-// audit action type
+// audit action type 
 export type AuditAction =
   | 'USER_REGISTER'
   | 'USER_LOGIN'
@@ -21,7 +21,11 @@ export type AuditAction =
   | 'ACCOUNT_UNLOCKED'
   | 'LOGIN_FAILED'
   | 'VERIFICATION_EMAIL_SENT'
-  | 'RESET_EMAIL_SENT';
+  | 'RESET_EMAIL_SENT'
+  | 'USER_DATA_EXPORTED'
+  | 'USER_DATA_ANONYMIZED'
+  | 'USER_PERMANENTLY_DELETED'
+  | 'EMAIL_UPDATED';
 
 interface AuditLogData {
   userId: string;
