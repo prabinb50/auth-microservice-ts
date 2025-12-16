@@ -7,7 +7,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // connection pooling configuration
   relationMode = "prisma"
 }
 
@@ -35,35 +34,42 @@ enum AuditAction {
   LOGIN_FAILED
   VERIFICATION_EMAIL_SENT
   RESET_EMAIL_SENT
-  USER_DATA_EXPORTED         // gdpr: data export
-  USER_DATA_ANONYMIZED       // gdpr: anonymization
-  USER_PERMANENTLY_DELETED   // gdpr: permanent deletion
-  EMAIL_UPDATED              // gdpr: rectification
+  USER_DATA_EXPORTED
+  USER_DATA_ANONYMIZED
+  USER_PERMANENTLY_DELETED
+  EMAIL_UPDATED
+  MAGIC_LINK_REQUESTED
+  MAGIC_LINK_SENT
+  MAGIC_LINK_LOGIN
+  MAGIC_LINK_FAILED
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  password      String
-  role          Role            @default(USER)
-  emailVerified Boolean         @default(false)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  role                  Role      @default(USER)
+  emailVerified         Boolean   @default(false)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  lastLoginAt           DateTime?
+  lastLoginIp           String?
+  failedLoginAttempts   Int       @default(0)
+  accountLockedUntil    DateTime?
 
-  failedLoginAttempts Int       @default(0)
-  accountLockedUntil  DateTime?
-  lastLoginAt         DateTime?
-  lastLoginIp         String?
-
-  refreshTokens RefreshToken[]
-  verificationTokens VerificationToken[]
-  passwordResetTokens PasswordResetToken[]
-  sessions Session[]
-  auditLogs AuditLog[]
-  performedActions AuditLog[] @relation("PerformedBy")
+  // relations
+  refreshTokens         RefreshToken[]
+  verificationTokens    VerificationToken[]
+  passwordResetTokens   PasswordResetToken[]
+  magicLinkTokens       MagicLinkToken[]
+  sessions              Session[]
+  auditLogs             AuditLog[]
+  adminActions          AuditLog[]  @relation("AdminActions")
 
   @@index([email])
+  @@index([role])
   @@index([emailVerified])
+  @@index([createdAt])
 }
 
 model RefreshToken {
@@ -110,7 +116,26 @@ model PasswordResetToken {
   @@index([used])
 }
 
-// session tracking model
+// magic login link token
+model MagicLinkToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  usedAt    DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@index([used])
+}
+
 model Session {
   id            String   @id @default(uuid())
   userId        String
@@ -135,22 +160,21 @@ model Session {
   @@index([expiresAt])
 }
 
-// audit log for security events
 model AuditLog {
-  id            String      @id @default(uuid())
-  userId        String
-  performedBy   String?     // admin who performed the action (for admin actions)
-  action        AuditAction
-  resource      String?     // affected resource (e.g., user email, session id)
-  ipAddress     String?
-  userAgent     String?
-  metadata      Json?       // additional context (role changed from/to, etc.)
-  success       Boolean     @default(true)
-  errorMessage  String?
-  createdAt     DateTime    @default(now())
+  id           String      @id @default(uuid())
+  userId       String?
+  performedBy  String?
+  action       AuditAction
+  resource     String?
+  ipAddress    String?
+  userAgent    String?
+  metadata     Json?
+  success      Boolean     @default(true)
+  errorMessage String?
+  createdAt    DateTime    @default(now())
 
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  admin         User?       @relation("PerformedBy", fields: [performedBy], references: [id], onDelete: SetNull)
+  user         User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  admin        User?       @relation("AdminActions", fields: [performedBy], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([performedBy])

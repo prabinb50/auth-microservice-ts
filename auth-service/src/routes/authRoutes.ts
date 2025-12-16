@@ -25,10 +25,16 @@ import {
   handleEmailUpdate,
   handleDataRetentionInfo,
 } from "../controllers/gdprController";
+import {
+  handleMagicLinkRequest,
+  handleMagicLinkLogin,
+  handleGetMagicLinkStatus,
+} from "../controllers/magicLinkController";
 import { authenticate, requireAdmin } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validate";
 import { loginSchema, registerSchema, updateRoleSchema } from "../validators/authValidators";
 import { updateEmailSchema, anonymizationSchema, permanentDeletionSchema } from "../validators/gdprValidators";
+import { magicLinkRequestSchema, magicLinkLoginSchema } from "../validators/magicLinkValidators";
 import { loginRateLimiter, registerRateLimiter } from "../middlewares/loginRateLimiter";
 import { getAdminActionsHandler, getAllAuditLogsHandler, getMyAuditLogs } from "../controllers/auditController";
 
@@ -40,9 +46,16 @@ router.post("/login", loginRateLimiter, validate(loginSchema), login);
 router.post("/refresh", refresh);
 router.post("/logout", logout);
 
+// magic link routes (public)
+router.post("/magic-link/request", loginRateLimiter, validate(magicLinkRequestSchema), handleMagicLinkRequest);
+router.post("/magic-link/verify", loginRateLimiter, validate(magicLinkLoginSchema), handleMagicLinkLogin);
+
 // protected routes (any authenticated user)
 router.get("/profile", authenticate, getProfile);
 router.get("/user/:id", authenticate, getUserById);
+
+// magic link status (authenticated users)
+router.get("/magic-link/status", authenticate, handleGetMagicLinkStatus);
 
 // session management routes (authenticated users)
 router.get("/sessions", authenticate, getActiveSessions);
