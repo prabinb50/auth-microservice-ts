@@ -17,13 +17,13 @@ export const setRefreshTokenCookie = (res: Response, token: string, expiresAt: D
         secure,
         sameSite,
         expires: expiresAt,
-        path: "/auth",
+        path: "/",
     });
 };
 
 // clear refresh token cookie
 export const clearRefreshTokenCookie = (res: Response) => {
-    res.clearCookie(COOKIE_NAME, { httpOnly: true, path: "/auth" });
+    res.clearCookie(COOKIE_NAME, { httpOnly: true, path: "/" });
 };
 
 // helper to read cookie name in controllers
