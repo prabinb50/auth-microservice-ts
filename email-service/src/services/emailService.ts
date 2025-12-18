@@ -235,15 +235,16 @@ export const resendVerificationEmail = async (email: string) => {
   return await sendVerificationEmail(user.id, user.email);
 };
 
-// send magic login link
+// send magic login link - updated to support new user signups
 export const sendMagicLinkEmail = async (
   userId: string,
   email: string,
   ipAddress: string,
-  userAgent: string
+  userAgent: string,
+  isNewUser: boolean = false
 ) => {
   try {
-    logger.info('generating magic link token', { userId, email });
+    logger.info('generating magic link token', { userId, email, isNewUser });
 
     // generate magic link token
     const token = generateMagicLinkToken(userId);
@@ -263,22 +264,28 @@ export const sendMagicLinkEmail = async (
     logger.info('magic link token saved to database', {
       userId,
       expiresAt,
+      isNewUser,
     });
 
     // create magic link
     const magicLink = `${process.env.CLIENT_URL}/magic-login?token=${token}`;
 
-    logger.info('sending magic link email', { userId, email });
+    logger.info('sending magic link email', { userId, email, isNewUser });
+
+    // customize email subject based on new/existing user
+    const subject = isNewUser 
+      ? 'welcome! your magic login link'
+      : 'your magic login link';
 
     // send email
     await transporter.sendMail({
       from: `"Auth Service" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: 'your magic login link',
-      html: magicLinkEmailTemplate(magicLink, email.split('@')[0]),
+      subject,
+      html: magicLinkEmailTemplate(magicLink, email.split('@')[0], isNewUser),
     });
 
-    logger.info('magic link email sent successfully', { userId, email });
+    logger.info('magic link email sent successfully', { userId, email, isNewUser });
 
     return { message: 'magic login link sent successfully' };
   } catch (error: any) {

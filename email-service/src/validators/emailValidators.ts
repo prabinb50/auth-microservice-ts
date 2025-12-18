@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
-// send verification email schema
+// send verification email schema 
 export const sendVerificationSchema = z.object({
   userId: z.string().uuid({ message: 'invalid user id format' }),
   email: z.string().email({ message: 'invalid email format' }).trim(),
 });
 
-// verify email schema
+// verify email schema 
 export const verifyEmailSchema = z.object({
   token: z.string().min(1, { message: 'token is required' }).trim(),
 });
 
-// forgot password schema
+// forgot password schema 
 export const forgotPasswordSchema = z.object({
   email: z.string().email({ message: 'invalid email format' }).trim(),
 });
 
-// reset password schema
+// reset password schema 
 export const resetPasswordSchema = z.object({
   token: z.string().min(1, { message: 'token is required' }).trim(),
   newPassword: z.string()
@@ -29,15 +29,16 @@ export const resetPasswordSchema = z.object({
     .trim(),
 });
 
-// resend verification schema
+// resend verification schema 
 export const resendVerificationSchema = z.object({
   email: z.string().email({ message: 'invalid email format' }).trim(),
 });
 
-// send magic login link schema
+// send magic login link schema 
 export const sendMagicLinkSchema = z.object({
   userId: z.string().uuid({ message: 'invalid user id format' }),
   email: z.string().email({ message: 'invalid email format' }).trim(),
   ipAddress: z.string().min(1, { message: 'ip address is required' }),
   userAgent: z.string().min(1, { message: 'user agent is required' }),
+  isNewUser: z.boolean().optional().default(false),
 });

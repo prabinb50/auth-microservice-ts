@@ -84,8 +84,21 @@ export const passwordResetEmailTemplate = (resetLink: string, userName: string =
   `;
 };
 
-// magic login link email template
-export const magicLinkEmailTemplate = (magicLink: string, userName: string = 'User'): string => {
+// magic login link email template - updated to support new users
+export const magicLinkEmailTemplate = (magicLink: string, userName: string = 'User', isNewUser: boolean = false): string => {
+  // welcome message for new users
+  const welcomeSection = isNewUser ? `
+    <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin: 20px 0; border-radius: 4px;">
+      <strong>🎉 welcome to our platform!</strong><br>
+      your account has been created successfully. we've sent you this magic link to get you started instantly - no password needed!
+    </div>
+  ` : '';
+
+  // different greeting for new vs existing users
+  const greeting = isNewUser 
+    ? 'welcome to our platform' 
+    : 'welcome back';
+
   return `
     <!DOCTYPE html>
     <html>
@@ -136,18 +149,23 @@ export const magicLinkEmailTemplate = (magicLink: string, userName: string = 'Us
     <body>
       <div class="container">
         <div class="content">
-          <h2 style="color: #28a745; margin-top: 0;">🔐 your magic login link</h2>
+          <h2 style="color: #28a745; margin-top: 0;">🔐 ${greeting}!</h2>
           <p>hello ${userName},</p>
-          <p>you requested a magic login link to access your account. click the button below to log in instantly without a password:</p>
+          
+          ${welcomeSection}
+          
+          <p>${isNewUser ? 'click the button below to activate your account and log in instantly:' : 'click the button below to log in instantly without a password:'}</p>
           
           <div style="text-align: center;">
-            <a href="${magicLink}" class="button">login instantly</a>
+            <a href="${magicLink}" class="button">${isNewUser ? 'activate account & login' : 'login instantly'}</a>
           </div>
 
+          ${!isNewUser ? `
           <div class="info-box">
             <strong>💡 what is a magic link?</strong><br>
             magic links let you log in securely without typing a password. just click the link and you're in!
           </div>
+          ` : ''}
 
           <p>or copy and paste this link into your browser:</p>
           <div class="link-text">${magicLink}</div>
@@ -159,9 +177,16 @@ export const magicLinkEmailTemplate = (magicLink: string, userName: string = 'Us
             • anyone with this link can access your account - keep it private
           </div>
 
+          ${isNewUser ? `
+          <div class="info-box">
+            <strong>✨ passwordless authentication</strong><br>
+            you can always log in using magic links - no need to remember passwords! just enter your email and we'll send you a fresh login link.
+          </div>
+          ` : ''}
+
           <div class="footer">
-            <p><strong>didn't request this link?</strong></p>
-            <p>if you didn't request a magic login link, please ignore this email. your account is still secure.</p>
+            <p><strong>didn't request this ${isNewUser ? 'account' : 'link'}?</strong></p>
+            <p>if you didn't ${isNewUser ? 'sign up' : 'request a magic login link'}, please ignore this email. ${!isNewUser ? 'your account is still secure.' : ''}</p>
             <p style="margin-top: 20px; color: #999;">
               this is an automated email from auth service. please do not reply to this email.
             </p>
