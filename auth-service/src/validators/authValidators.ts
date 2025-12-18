@@ -29,6 +29,13 @@ export const updateRoleSchema = z.object({
   role: z.enum(["USER", "ADMIN"], { message: "role must be USER or ADMIN" }),
 });
 
+// delete all users schema 
+// export const deleteAllUsersSchema = z.object({
+//   confirmation: z.literal("DELETE_ALL_USERS", {
+//     errorMap: () => ({ message: "confirmation must be exactly 'DELETE_ALL_USERS'" }),
+//   }),
+// });
+
 // get audit logs query schema
 export const getAuditLogsSchema = z.object({
   userId: z.string().uuid().optional(),

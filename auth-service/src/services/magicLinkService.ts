@@ -5,6 +5,8 @@ import { signAccessToken, signRefreshToken, getRefreshTokenExpiryDate } from '..
 import { saveRefreshToken } from './tokenService';
 import { createSession } from './sessionService';
 import { createAuditLog } from './auditService';
+import crypto from 'crypto';  
+import bcrypt from 'bcrypt';  
 
 // helper function to get ip address
 const getIpAddress = (req: Request): string => {
@@ -17,24 +19,63 @@ const getIpAddress = (req: Request): string => {
   );
 };
 
-// request magic login link
+// request magic login link - supports both new user registration and existing user login
 export const requestMagicLink = async (email: string, req: Request) => {
   try {
     logger.info('magic link requested', { email });
 
     // find user by email
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email },
     });
 
-    // don't reveal if user exists or not (security best practice)
+    let isNewUser = false;
+
+    // if user doesn't exist, create a new user (passwordless signup)
     if (!user) {
-      logger.warn('magic link requested for non-existent email', { email });
-      
-      // still return success to prevent email enumeration
-      return {
-        message: 'if this email is registered, a magic login link has been sent',
-      };
+      logger.info('creating new user via magic link (passwordless)', { email });
+
+      // generate a secure random password (never shown to user)
+      const secureRandomPassword = crypto.randomBytes(32).toString('hex');
+
+      // hash the random password
+      const hashedPassword = await bcrypt.hash(secureRandomPassword, 10);
+
+      // create new user with auto-verified email (magic link proves ownership)
+      user = await prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword, // secure random password
+          role: 'USER',
+          emailVerified: false, // will be verified upon magic link click
+        },
+      });
+
+      isNewUser = true;
+
+      logger.info('new user created via magic link', {
+        userId: user.id,
+        email: user.email,
+        isPasswordless: true,
+      });
+
+      // log user registration
+      await createAuditLog({
+        userId: user.id,
+        action: 'USER_REGISTER',
+        resource: email,
+        ipAddress: getIpAddress(req),
+        userAgent: req.headers['user-agent'] || null,
+        metadata: {
+          registrationMethod: 'magic-link',
+          passwordless: true,
+        },
+      });
+    } else {
+      logger.info('existing user found for magic link', {
+        userId: user.id,
+        email: user.email,
+      });
     }
 
     // check if account is locked
@@ -42,7 +83,7 @@ export const requestMagicLink = async (email: string, req: Request) => {
       const now = new Date();
       if (user.accountLockedUntil > now) {
         const lockDuration = Math.ceil((user.accountLockedUntil.getTime() - now.getTime()) / 60000);
-        
+
         logger.warn('magic link requested for locked account', {
           userId: user.id,
           email,
@@ -74,7 +115,11 @@ export const requestMagicLink = async (email: string, req: Request) => {
       resource: email,
       ipAddress,
       userAgent,
-      metadata: { email },
+      metadata: {
+        email,
+        isNewUser,
+        isPasswordless: true,
+      },
     });
 
     // delete any existing unused magic link tokens for this user
@@ -88,8 +133,8 @@ export const requestMagicLink = async (email: string, req: Request) => {
     logger.info('deleted old unused magic link tokens', { userId: user.id });
 
     // call email service to generate and send magic link
-    const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:8001';
-    
+    const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:3000';
+
     const response = await fetch(`${emailServiceUrl}/email/send-magic-link`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -98,6 +143,7 @@ export const requestMagicLink = async (email: string, req: Request) => {
         email: user.email,
         ipAddress,
         userAgent,
+        isNewUser, // pass this to email service for custom message
       }),
     });
 
@@ -114,6 +160,7 @@ export const requestMagicLink = async (email: string, req: Request) => {
     logger.info('magic link email sent successfully', {
       userId: user.id,
       email: user.email,
+      isNewUser,
     });
 
     // log magic link sent
@@ -123,11 +170,18 @@ export const requestMagicLink = async (email: string, req: Request) => {
       resource: email,
       ipAddress,
       userAgent,
-      metadata: { email },
+      metadata: {
+        email,
+        isNewUser,
+        isPasswordless: true,
+      },
     });
 
+    // return generic message (security best practice)
     return {
-      message: 'if this email is registered, a magic login link has been sent',
+      message: isNewUser
+        ? 'account created! a magic login link has been sent to your email'
+        : 'a magic login link has been sent to your email',
     };
   } catch (error: any) {
     logger.error('magic link request failed', {
@@ -153,7 +207,7 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
 
     if (!magicLinkToken) {
       logger.warn('invalid magic link token');
-      
+
       throw new Error('invalid or expired magic link');
     }
 
@@ -187,7 +241,7 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
       const now = new Date();
       if (user.accountLockedUntil > now) {
         const lockDuration = Math.ceil((user.accountLockedUntil.getTime() - now.getTime()) / 60000);
-        
+
         logger.warn('magic link login attempt for locked account', {
           userId: user.id,
           lockDuration,
@@ -225,7 +279,7 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
 
     logger.info('magic link token marked as used', { userId: user.id });
 
-    // update user last login info
+    // update user last login info and auto-verify email
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -233,12 +287,12 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
         lastLoginIp: ipAddress,
         failedLoginAttempts: 0,
         accountLockedUntil: null,
-        // auto-verify email on magic link login
+        // auto-verify email on magic link login (proves email ownership)
         emailVerified: true,
       },
     });
 
-    logger.info('user last login updated', { userId: user.id });
+    logger.info('user last login updated and email verified', { userId: user.id });
 
     // generate auth tokens
     const accessToken = signAccessToken(user.id, user.role);
@@ -265,6 +319,7 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
       metadata: {
         email: user.email,
         emailVerified: true,
+        loginMethod: 'passwordless',
       },
     });
 

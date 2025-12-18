@@ -8,7 +8,7 @@ import {
 import { setRefreshTokenCookie } from '../utils/cookie';
 import logger from '../utils/logger';
 
-// request magic login link
+// request magic login link - handles both new user signup and existing user login
 export const handleMagicLinkRequest = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -17,7 +17,7 @@ export const handleMagicLinkRequest = async (req: Request, res: Response) => {
 
     const result = await requestMagicLink(email, req);
 
-    logger.info('magic link request processed', { email });
+    logger.info('magic link request processed successfully', { email });
 
     return res.status(200).json(result);
   } catch (error: any) {
@@ -27,7 +27,7 @@ export const handleMagicLinkRequest = async (req: Request, res: Response) => {
     });
 
     return res.status(400).json({
-      message: 'failed to send magic link',
+      message: 'failed to process magic link request',
       error: error.message,
     });
   }

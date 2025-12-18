@@ -218,6 +218,11 @@ export const anonymizeUserData = async (userId: string, req: Request) => {
       where: { userId },
     });
 
+    // delete magic link tokens
+    await prisma.magicLinkToken.deleteMany({
+      where: { userId },
+    });
+
     // anonymize user record (keep for audit trail but remove personal data)
     await prisma.user.update({
       where: { id: userId },
@@ -336,6 +341,11 @@ export const updateUserEmail = async (
       throw new Error('user not found');
     }
 
+    // delete old verification tokens
+    await prisma.verificationToken.deleteMany({
+      where: { userId },
+    });
+
     // update email and mark as unverified
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -358,14 +368,63 @@ export const updateUserEmail = async (
       },
     });
 
-    logger.info('user email updated successfully', {
+    logger.info('email updated in database', {
+      userId,
+      oldEmail: currentUser.email,
+      newEmail,
+    });
+
+    // call email service to send verification email for new address
+    try {
+      const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:8001';
+      
+      logger.info('calling email service to send verification', {
+        userId,
+        newEmail,
+        emailServiceUrl,
+      });
+
+      const response = await fetch(`${emailServiceUrl}/email/send-verification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: updatedUser.id,
+          email: newEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        logger.error('failed to send verification email to new address', {
+          userId,
+          newEmail,
+          status: response.status,
+          error: errorText,
+        });
+        throw new Error('failed to send verification email');
+      }
+
+      logger.info('verification email sent to new address', {
+        userId,
+        newEmail,
+      });
+    } catch (emailError: any) {
+      logger.error('error calling email service', {
+        userId,
+        newEmail,
+        error: emailError.message,
+      });
+      throw new Error('email updated but verification email failed to send');
+    }
+
+    logger.info('user email update completed successfully', {
       userId,
       oldEmail: currentUser.email,
       newEmail,
     });
 
     return {
-      message: 'email updated successfully. please verify your new email.',
+      message: 'email updated successfully. please verify your new email address.',
       user: {
         id: updatedUser.id,
         email: updatedUser.email,

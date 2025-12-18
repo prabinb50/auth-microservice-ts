@@ -56,10 +56,10 @@ export const handleAccountAnonymization = async (req: AuthenticatedRequest, res:
     const userId = req.user.userId;
     const { confirmation } = req.body;
 
-    if (confirmation !== 'ANONYMIZE_MY_ACCOUNT') {
+    if (confirmation !== 'ANONYMIZE_MY_DATA') {
       return res.status(400).json({
         message: 'confirmation required',
-        error: 'send { confirmation: "ANONYMIZE_MY_ACCOUNT" } to proceed',
+        error: 'send { confirmation: "ANONYMIZE_MY_DATA" } to proceed',
       });
     }
 
