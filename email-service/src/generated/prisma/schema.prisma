@@ -21,6 +21,7 @@ model User {
   password            String
   role                Role      @default(USER)
   emailVerified       Boolean   @default(false)
+  tokenVersion        Int       @default(0)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   lastLoginAt         DateTime?
@@ -28,16 +29,17 @@ model User {
   failedLoginAttempts Int       @default(0)
   accountLockedUntil  DateTime?
 
-  // relations
   refreshTokens       RefreshToken[]
   verificationTokens  VerificationToken[]
   passwordResetTokens PasswordResetToken[]
   magicLinkTokens     MagicLinkToken[]
+  sessions            Session[]
 
   @@index([email])
   @@index([role])
   @@index([emailVerified])
   @@index([createdAt])
+  @@index([tokenVersion])
 }
 
 model RefreshToken {
@@ -101,4 +103,28 @@ model MagicLinkToken {
   @@index([token])
   @@index([expiresAt])
   @@index([used])
+}
+
+model Session {
+  id             String   @id @default(uuid())
+  userId         String
+  refreshToken   String   @unique
+  deviceName     String?
+  deviceType     String?
+  browser        String?
+  os             String?
+  ipAddress      String?
+  country        String?
+  city           String?
+  isActive       Boolean  @default(true)
+  lastActivityAt DateTime @default(now())
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refreshToken])
+  @@index([isActive])
+  @@index([expiresAt])
 }

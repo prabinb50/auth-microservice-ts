@@ -90,7 +90,7 @@ export const verifyEmail = async (token: string) => {
 };
 
 // send password reset email
-export const sendPasswordResetEmail = async (email: string) => {
+export const sendPasswordResetEmail = async (email: string, ipAddress?: string, userAgent?: string) => {
   // find user by email
   const user = await prisma.user.findUnique({ where: { email } });
 
@@ -123,6 +123,29 @@ export const sendPasswordResetEmail = async (email: string) => {
     },
   });
 
+  // create audit log in auth-service
+  try {
+    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8000';
+    await fetch(`${authServiceUrl}/auth/internal/audit-log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        action: 'PASSWORD_RESET_REQUESTED',
+        resource: email,
+        ipAddress: ipAddress || 'unknown',
+        userAgent: userAgent || null,
+        metadata: { email },
+      }),
+    });
+    logger.info('password reset requested audit log created', { userId: user.id });
+  } catch (error) {
+    logger.error('failed to create audit log', {
+      userId: user.id,
+      error: error instanceof Error ? error.message : 'unknown'
+    });
+  }
+
   // create reset link
   const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
@@ -142,7 +165,7 @@ export const sendPasswordResetEmail = async (email: string) => {
 };
 
 // reset password
-export const resetPassword = async (token: string, newPassword: string) => {
+export const resetPassword = async (token: string, newPassword: string, ipAddress?: string, userAgent?: string) => {
   // find token in database
   const resetToken = await prisma.passwordResetToken.findUnique({
     where: { token },
@@ -175,14 +198,25 @@ export const resetPassword = async (token: string, newPassword: string) => {
   // hash new password
   const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 
-  // update user password
-  await prisma.user.update({
+  // increment tokenVersion to invalidate all existing tokens
+  const updatedUser = await prisma.user.update({
     where: { id: resetToken.userId },
     data: {
       password: hashedPassword,
       failedLoginAttempts: 0,
       accountLockedUntil: null,
+      tokenVersion: { increment: 1 },  
     },
+    select: {
+      id: true,
+      email: true,
+      tokenVersion: true
+    }
+  });
+
+  logger.info('password updated and tokenVersion incremented', {
+    userId: updatedUser.id,
+    newTokenVersion: updatedUser.tokenVersion
   });
 
   // mark token as used
@@ -196,11 +230,48 @@ export const resetPassword = async (token: string, newPassword: string) => {
     where: { userId: resetToken.userId },
   });
 
+  // deactivate all sessions
+  await prisma.session.updateMany({
+    where: { userId: resetToken.userId },
+    data: { isActive: false }
+  });
+
+  logger.info('all refresh tokens and sessions invalidated', {
+    userId: resetToken.userId
+  });
+
+  // create audit log in auth-service
+  try {
+    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8000';
+    await fetch(`${authServiceUrl}/auth/internal/audit-log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: resetToken.userId,
+        action: 'PASSWORD_RESET_COMPLETED',
+        resource: updatedUser.email,
+        ipAddress: ipAddress || 'unknown',
+        userAgent: userAgent || null,
+        metadata: {
+          email: updatedUser.email,
+          tokenVersionIncremented: true,
+          newTokenVersion: updatedUser.tokenVersion
+        },
+      }),
+    });
+    logger.info('password reset completed audit log created', { userId: resetToken.userId });
+  } catch (error) {
+    logger.error('failed to create audit log', {
+      userId: resetToken.userId,
+      error: error instanceof Error ? error.message : 'unknown'
+    });
+  }
+
   logger.info('password reset successfully', {
     userId: resetToken.userId
   });
 
-  return { message: 'password reset successfully' };
+  return { message: 'password reset successfully. all existing sessions have been terminated. please login again.' };
 };
 
 // resend verification email

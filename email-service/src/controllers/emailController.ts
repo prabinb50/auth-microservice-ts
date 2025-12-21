@@ -9,6 +9,17 @@ import {
 } from '../services/emailService';
 import logger from '../utils/logger';
 
+// helper to get ip address
+const getIpAddress = (req: Request): string => {
+  return (
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+    (req.headers['x-real-ip'] as string) ||
+    req.ip ||
+    req.socket.remoteAddress ||
+    'unknown'
+  );
+};
+
 // send verification email
 export const handleSendVerification = async (req: Request, res: Response) => {
   try {
@@ -64,10 +75,12 @@ export const handleVerifyEmail = async (req: Request, res: Response) => {
 export const handleForgotPassword = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
+    const ipAddress = getIpAddress(req);
+    const userAgent = req.headers['user-agent'] || 'unknown';
 
-    logger.info('password reset requested', { email });
+    logger.info('password reset requested', { email, ipAddress });
 
-    const result = await sendPasswordResetEmail(email);
+    const result = await sendPasswordResetEmail(email, ipAddress, userAgent);
     
     logger.info('password reset email processed', { email });
 
@@ -88,12 +101,15 @@ export const handleForgotPassword = async (req: Request, res: Response) => {
 export const handleResetPassword = async (req: Request, res: Response) => {
   try {
     const { token, newPassword } = req.body;
+    const ipAddress = getIpAddress(req);
+    const userAgent = req.headers['user-agent'] || 'unknown';
 
     logger.info('password reset attempt', { 
-      token: token.substring(0, 10) + '...' 
+      token: token.substring(0, 10) + '...',
+      ipAddress
     });
 
-    const result = await resetPassword(token, newPassword);
+    const result = await resetPassword(token, newPassword, ipAddress, userAgent);
     
     logger.info('password reset successfully');
 
