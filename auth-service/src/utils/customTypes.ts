@@ -7,6 +7,7 @@ export type UserRole = "USER" | "ADMIN";
 export interface TokenPayload {
     userId: string;
     role: UserRole;
+    tokenVersion: number;  
 }
 
 // authenticated request with user info

@@ -5,8 +5,8 @@ import { signAccessToken, signRefreshToken, getRefreshTokenExpiryDate } from '..
 import { saveRefreshToken } from './tokenService';
 import { createSession } from './sessionService';
 import { createAuditLog } from './auditService';
-import crypto from 'crypto';  
-import bcrypt from 'bcrypt';  
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 
 // helper function to get ip address
 const getIpAddress = (req: Request): string => {
@@ -294,9 +294,9 @@ export const verifyMagicLinkAndLogin = async (token: string, req: Request) => {
 
     logger.info('user last login updated and email verified', { userId: user.id });
 
-    // generate auth tokens
-    const accessToken = signAccessToken(user.id, user.role);
-    const refreshToken = signRefreshToken(user.id, user.role);
+    // generate auth tokens with tokenVersion
+    const accessToken = signAccessToken(user.id, user.role, user.tokenVersion);
+    const refreshToken = signRefreshToken(user.id, user.role, user.tokenVersion);
     const expiresAt = getRefreshTokenExpiryDate();
 
     // save refresh token to database

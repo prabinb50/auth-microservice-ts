@@ -1,9 +1,10 @@
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthenticatedRequest } from '../utils/customTypes';
 import {
   getUserAuditLogs,
   getAllAuditLogs,
   getAdminActionLogs,
+  createAuditLog,
 } from '../services/auditService';
 import logger from '../utils/logger';
 
@@ -112,6 +113,45 @@ export const getAdminActionsHandler = async (req: AuthenticatedRequest, res: Res
     });
     return res.status(500).json({
       message: 'failed to retrieve admin action logs',
+      error: error.message,
+    });
+  }
+};
+
+// create audit log (called by email-service)
+export const createAuditLogHandler = async (req: Request, res: Response) => {
+  try {
+    const { userId, action, resource, ipAddress, userAgent, metadata, success, errorMessage } = req.body;
+
+    logger.info('creating audit log from external service', {
+      userId,
+      action,
+      resource
+    });
+
+    await createAuditLog({
+      userId,
+      action,
+      resource: resource || null,
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+      metadata: metadata || {},
+      success: success !== undefined ? success : true,
+      errorMessage: errorMessage || null,
+    });
+
+    logger.info('audit log created successfully', { userId, action });
+
+    return res.status(201).json({
+      message: 'audit log created successfully',
+    });
+  } catch (error: any) {
+    logger.error('create audit log error', {
+      error: error.message,
+      body: req.body
+    });
+    return res.status(500).json({
+      message: 'failed to create audit log',
       error: error.message,
     });
   }

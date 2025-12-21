@@ -13,15 +13,15 @@ if (!ACCESS_SECRET || !REFRESH_SECRET) {
     throw new Error("missing jwt access or refresh secrets in environment variables");
 }
 
-// generate access token with role
-export const signAccessToken = (userId: string, role: UserRole): string => {
-    const payload: TokenPayload = { userId, role };
+// generate access token with role and tokenVersion
+export const signAccessToken = (userId: string, role: UserRole, tokenVersion: number): string => {
+    const payload: TokenPayload = { userId, role, tokenVersion };
     return jwt.sign(payload, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES } as SignOptions);
 };
 
-// generate refresh token with role
-export const signRefreshToken = (userId: string, role: UserRole): string => {
-    const payload: TokenPayload = { userId, role };
+// generate refresh token with role and tokenVersion
+export const signRefreshToken = (userId: string, role: UserRole, tokenVersion: number): string => {
+    const payload: TokenPayload = { userId, role, tokenVersion };
     return jwt.sign(payload, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRES } as SignOptions);
 };
 

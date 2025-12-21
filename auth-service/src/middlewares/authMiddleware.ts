@@ -1,9 +1,11 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest, UserRole } from "../utils/customTypes";
 import { verifyAccessToken } from "../utils/jwt";
+import prisma from "../utils/prisma";
+import logger from "../utils/logger";
 
 // middleware to protect routes
-export const authenticate = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticate = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
         // get authorization header
         const authHeader = req.header("Authorization");
@@ -36,8 +38,37 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
         }
 
         try {
-            // verify token and get user data with role
+            // verify token and get user data with role and tokenVersion
             const decoded = verifyAccessToken(token);
+
+            // check if tokenVersion matches current user's tokenVersion
+            const user = await prisma.user.findUnique({
+                where: { id: decoded.userId },
+                select: { tokenVersion: true, role: true, emailVerified: true }
+            });
+
+            if (!user) {
+                logger.warn('token verification failed - user not found', {
+                    userId: decoded.userId
+                });
+                return res.status(401).json({ 
+                    message: "invalid token",
+                    error: "user not found"
+                });
+            }
+
+            // check if token version matches (invalidate old tokens after password reset)
+            if (decoded.tokenVersion !== user.tokenVersion) {
+                logger.warn('token verification failed - token version mismatch', {
+                    userId: decoded.userId,
+                    tokenVersion: decoded.tokenVersion,
+                    currentVersion: user.tokenVersion
+                });
+                return res.status(401).json({ 
+                    message: "token invalidated",
+                    error: "please login again. your password was recently changed."
+                });
+            }
 
             // attach user to request
             req.user = decoded;
@@ -45,13 +76,18 @@ export const authenticate = (req: AuthenticatedRequest, res: Response, next: Nex
             // pass control to next middleware
             next();
         } catch (error) {
+            logger.warn('token verification failed', {
+                error: error instanceof Error ? error.message : 'unknown'
+            });
             return res.status(401).json({ 
                 message: "invalid or expired token",
                 error: error instanceof Error ? error.message : "token verification failed"
             });
         }
     } catch (error) {
-        console.error("authentication error:", error);
+        logger.error("authentication error", {
+            error: error instanceof Error ? error.message : 'unknown'
+        });
         return res.status(500).json({ 
             message: "internal server error",
             error: "authentication process failed"

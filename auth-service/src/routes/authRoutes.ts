@@ -36,7 +36,7 @@ import { loginSchema, registerSchema, updateRoleSchema } from "../validators/aut
 import { updateEmailSchema, anonymizationSchema, permanentDeletionSchema } from "../validators/gdprValidators";
 import { magicLinkRequestSchema, magicLinkLoginSchema } from "../validators/magicLinkValidators";
 import { loginRateLimiter, registerRateLimiter } from "../middlewares/loginRateLimiter";
-import { getAdminActionsHandler, getAllAuditLogsHandler, getMyAuditLogs } from "../controllers/auditController";
+import { createAuditLogHandler, getAdminActionsHandler, getAllAuditLogsHandler, getMyAuditLogs } from "../controllers/auditController";
 
 const router = Router();
 
@@ -49,6 +49,9 @@ router.post("/logout", logout);
 // magic link routes (public)
 router.post("/magic-link/request", loginRateLimiter, validate(magicLinkRequestSchema), handleMagicLinkRequest);
 router.post("/magic-link/verify", loginRateLimiter, validate(magicLinkLoginSchema), handleMagicLinkLogin);
+
+// internal routes (for email-service)
+router.post("/internal/audit-log", createAuditLogHandler);
 
 // protected routes (any authenticated user)
 router.get("/profile", authenticate, getProfile);

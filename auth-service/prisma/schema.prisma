@@ -50,6 +50,7 @@ model User {
   password              String
   role                  Role      @default(USER)
   emailVerified         Boolean   @default(false)
+  tokenVersion          Int       @default(0)  
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   lastLoginAt           DateTime?
@@ -70,6 +71,7 @@ model User {
   @@index([role])
   @@index([emailVerified])
   @@index([createdAt])
+  @@index([tokenVersion])  
 }
 
 model RefreshToken {
@@ -116,7 +118,6 @@ model PasswordResetToken {
   @@index([used])
 }
 
-// magic login link token
 model MagicLinkToken {
   id        String   @id @default(uuid())
   token     String   @unique

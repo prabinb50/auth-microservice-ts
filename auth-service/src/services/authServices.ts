@@ -35,6 +35,7 @@ export const registerUser = async (email: string, password: string, role: UserRo
             password: hashedPassword,
             role,
             emailVerified: false,
+            tokenVersion: 0,  
         },
     });
 
@@ -235,9 +236,9 @@ export const loginUser = async (email: string, password: string, req: Request) =
     // log successful login
     await logUserLogin(user.id, email, req);
 
-    // generate tokens with role
-    const accessToken = signAccessToken(user.id, user.role);
-    const refreshToken = signRefreshToken(user.id, user.role);
+    // generate tokens with role and tokenVersion
+    const accessToken = signAccessToken(user.id, user.role, user.tokenVersion);
+    const refreshToken = signRefreshToken(user.id, user.role, user.tokenVersion);
 
     // save refresh token in db
     const expiresAt = getRefreshTokenExpiryDate();
@@ -278,9 +279,10 @@ export const rotateRefreshToken = async (oldToken: string, req: Request) => {
         throw err;
     }
 
-    // get user to fetch current role
+    // get user to fetch current role and tokenVersion
     const user = await prisma.user.findUnique({
         where: { id: found.userId },
+        select: { role: true, tokenVersion: true }
     });
 
     if (!user) {
@@ -299,20 +301,21 @@ export const rotateRefreshToken = async (oldToken: string, req: Request) => {
     await deactivateSession(oldToken);
 
     logger.info('rotating refresh token', { 
-        userId: user.id,
-        role: user.role 
+        userId: found.userId,
+        role: user.role,
+        tokenVersion: user.tokenVersion
     });
 
     // log token refreshed
-    await logTokenRefreshed(user.id, req);
+    await logTokenRefreshed(found.userId, req);
 
-    // issue new tokens with current role
-    const newAccessToken = signAccessToken(user.id, user.role);
-    const newRefreshToken = signRefreshToken(user.id, user.role);
+    // issue new tokens with current role and tokenVersion
+    const newAccessToken = signAccessToken(found.userId, user.role, user.tokenVersion);
+    const newRefreshToken = signRefreshToken(found.userId, user.role, user.tokenVersion);
     const expiresAt = getRefreshTokenExpiryDate();
 
     // save new refresh token
-    await saveRefreshToken(user.id, newRefreshToken, expiresAt);
+    await saveRefreshToken(found.userId, newRefreshToken, expiresAt);
 
     // update session activity
     await updateSessionActivity(oldToken);
@@ -321,7 +324,7 @@ export const rotateRefreshToken = async (oldToken: string, req: Request) => {
         accessToken: newAccessToken, 
         refreshToken: newRefreshToken, 
         expiresAt, 
-        userId: user.id 
+        userId: found.userId 
     };
 };
 
