@@ -19,8 +19,8 @@ export const apiRateLimiter = rateLimit({
 
 // rate limiter for sending emails
 export const emailSendRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // limit to 5 emails per hour per ip
+  windowMs: 60 * 60 * 1000, 
+  max: 5, 
   message: {
     message: "too many email requests"
   },
@@ -36,8 +36,8 @@ export const emailSendRateLimiter = rateLimit({
 
 // rate limiter for verification attempts
 export const verificationRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit to 10 verification attempts per 15 minutes
+  windowMs: 15 * 60 * 1000, 
+  max: 10, 
   message: {
     message: "too many verification attempts"
   },
