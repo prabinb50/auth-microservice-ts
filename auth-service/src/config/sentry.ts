@@ -19,10 +19,10 @@ export const initSentry = () => {
 
   try {
     Sentry.init({
-      dsn: dsn, // now guaranteed to be string, not string | undefined
+      dsn: dsn, 
       environment: process.env.SENTRY_ENVIRONMENT || 'development',
 
-      // performance & profiling (built-in to sentry v10)
+      // performance & profiling 
       tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '1.0'),
       profilesSampleRate: parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '1.0'),
 

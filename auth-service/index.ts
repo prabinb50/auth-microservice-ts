@@ -159,7 +159,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     ip: req.ip,
   });
 
-  // send error to sentry (manually since v10 has no automatic handlers)
+  // send error to sentry 
   if (process.env.SENTRY_ENABLED === 'true') {
     captureException(err, {
       url: req.url,

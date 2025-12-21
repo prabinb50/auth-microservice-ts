@@ -2,7 +2,7 @@ import prisma from '../utils/prisma';
 import logger from '../utils/logger';
 import { Request } from 'express';
 
-// audit action type - must match prisma schema exactly
+// audit action type 
 export type AuditAction =
   | 'USER_REGISTER'
   | 'USER_LOGIN'

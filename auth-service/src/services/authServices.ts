@@ -23,12 +23,12 @@ import {
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_DURATION_MINUTES = 30;
 
-// register new user with email verification disabled by default
+// register new user
 export const registerUser = async (email: string, password: string, role: UserRole = "USER", req: Request) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // create user with emailVerified = false
+    // create user in db
     const newUser = await prisma.user.create({
         data: {
             email,
@@ -103,7 +103,7 @@ export const findUserByEmail = async (email: string) => {
     });
 };
 
-// login user - check email verification status and track session
+// login user
 export const loginUser = async (email: string, password: string, req: Request) => {
     // find user
     const user = await findUserByEmail(email);
@@ -194,7 +194,6 @@ export const loginUser = async (email: string, password: string, req: Request) =
             error.lockedUntil = lockUntil;
             throw error;
         } else {
-            // just increment attempts
             await prisma.user.update({
                 where: { id: user.id },
                 data: {
@@ -328,7 +327,7 @@ export const rotateRefreshToken = async (oldToken: string, req: Request) => {
     };
 };
 
-// logout user by deleting refresh token(s) and deactivating session
+// logout user (delete refresh token and deactivate session)
 export const logoutUser = async (token?: string, userId?: string) => {
     if (token) {
         await deleteRefreshToken(token);
@@ -417,7 +416,7 @@ export const deleteUserById = async (userId: string, adminId: string, req: Reque
         throw new Error("user not found");
     }
 
-    // delete user (cascade will delete related tokens and sessions)
+    // delete user
     await prisma.user.delete({
         where: { id: userId },
     });

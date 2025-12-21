@@ -8,7 +8,7 @@ import {
 import { setRefreshTokenCookie } from '../utils/cookie';
 import logger from '../utils/logger';
 
-// request magic login link - handles both new user signup and existing user login
+// request magic login link (handles both new user signup and existing user login)
 export const handleMagicLinkRequest = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;

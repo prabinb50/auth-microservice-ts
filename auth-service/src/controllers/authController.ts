@@ -331,7 +331,7 @@ export const changeUserRole = async (req: AuthenticatedRequest, res: Response) =
             });
         }
 
-        // updateUserRole now includes adminId and req for audit logging
+        
         const updatedUser = await updateUserRole(userId, role, req.user.userId, req);
 
         logger.info('user role updated', { 
@@ -390,7 +390,6 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
             });
         }
 
-        // deleteUserById now includes adminId and req for audit logging
         const result = await deleteUserById(userId, req.user.userId, req);
 
         logger.info('user deleted', { 
@@ -421,7 +420,6 @@ export const deleteAllNonAdmins = async (req: AuthenticatedRequest, res: Respons
             return res.status(401).json({ message: "unauthorized" });
         }
 
-        // deleteAllNonAdminUsers now includes adminId and req for audit logging
         const result = await deleteAllNonAdminUsers(req.user.userId, req);
 
         logger.warn('all non-admin users deleted', { 
@@ -467,7 +465,6 @@ export const deleteAllUsersHandler = async (req: AuthenticatedRequest, res: Resp
         // exclude the current admin from deletion
         const currentAdminId = req.user.userId;
 
-        // deleteAllUsers now includes req for audit logging
         const result = await deleteAllUsers(currentAdminId, req);
 
         logger.warn('all users deleted', { 

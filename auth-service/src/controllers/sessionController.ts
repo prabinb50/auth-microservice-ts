@@ -57,7 +57,6 @@ export const revokeSpecificSession = async (req: AuthenticatedRequest, res: Resp
       });
     }
 
-    // revokeSession now includes req for audit logging
     const result = await revokeSession(sessionId, req.user.userId, req);
 
     logger.info('session revoked', {

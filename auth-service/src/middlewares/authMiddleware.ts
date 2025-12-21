@@ -26,7 +26,7 @@ export const authenticate = async (req: AuthenticatedRequest, res: Response, nex
             });
         }
 
-        // extract token after "bearer " (7 characters)
+        // extract token
         const token = authHeader.substring(7).trim();
 
         // check if token exists after bearer prefix
@@ -113,8 +113,6 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
                 error: "admin privileges required for this operation"
             });
         }
-
-        // user is admin, proceed
         next();
     } catch (error) {
         console.error("admin check error:", error);
@@ -144,8 +142,6 @@ export const requireRole = (allowedRoles: UserRole[]) => {
                     error: `requires one of these roles: ${allowedRoles.join(", ")}`
                 });
             }
-
-            // user has required role, proceed
             next();
         } catch (error) {
             console.error("role check error:", error);

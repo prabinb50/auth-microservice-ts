@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 
 const sanitizeString = (str: string): string => {
     if (typeof str !== 'string') return str;
-    
     return str
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/<[^>]+>/g, '')
