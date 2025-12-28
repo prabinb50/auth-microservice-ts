@@ -1,10 +1,11 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import logger from './logger';
+import env from '../config/env';
 
-const EMAIL_TOKEN_SECRET = process.env.EMAIL_TOKEN_SECRET || 'f3c9e7b1c0a24f8d89e4d12f7a56cbe2b4cd8f7a93d1e56ea4c0b6bfe12d9ca7';
-const VERIFICATION_TOKEN_EXPIRY = process.env.VERIFICATION_TOKEN_EXPIRY || '24h';
-const RESET_TOKEN_EXPIRY = process.env.RESET_TOKEN_EXPIRY || '1h';
-const MAGIC_LINK_TOKEN_EXPIRY = process.env.MAGIC_LINK_TOKEN_EXPIRY || '15m';
+const EMAIL_TOKEN_SECRET = env.tokens.secret;
+const VERIFICATION_TOKEN_EXPIRY = env.tokens.verificationExpiry;
+const RESET_TOKEN_EXPIRY = env.tokens.resetExpiry;
+const MAGIC_LINK_TOKEN_EXPIRY = env.tokens.magicLinkExpiry;
 
 // generate verification token
 export const generateVerificationToken = (userId: string): string => {
@@ -15,7 +16,7 @@ export const generateVerificationToken = (userId: string): string => {
       { expiresIn: VERIFICATION_TOKEN_EXPIRY } as SignOptions
     );
     logger.debug('verification token generated', { userId });
-    return token;
+    return token; 
   } catch (error: any) {
     logger.error('failed to generate verification token', { userId, error: error.message });
     throw error;

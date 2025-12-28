@@ -4,6 +4,7 @@ import { transporter } from '../utils/mailer';
 import { generatePasswordResetToken, generateVerificationToken, generateMagicLinkToken, getResetTokenExpiry, getVerificationTokenExpiry, getMagicLinkTokenExpiry } from '../utils/tokenGenerator';
 import bcrypt from 'bcrypt';
 import logger from '../utils/logger';
+import { env } from '../config/env';
 
 const SALT_ROUNDS = 10;
 
@@ -25,13 +26,13 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
   });
 
   // create verification link
-  const verificationLink = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+  const verificationLink = `${env.client.url}/verify-email?token=${token}`;
 
   logger.info('sending verification email', { userId, email });
 
   // send email
   await transporter.sendMail({
-    from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
+    from: `"${env.email.from.name}" <${env.email.from.email}>`,
     to: email,
     subject: 'verify your email address',
     html: verificationEmailTemplate(verificationLink, email.split('@')[0]),
@@ -125,7 +126,7 @@ export const sendPasswordResetEmail = async (email: string, ipAddress?: string, 
 
   // create audit log in auth-service
   try {
-    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8000';
+    const authServiceUrl = env.services.authServiceUrl;
     await fetch(`${authServiceUrl}/auth/internal/audit-log`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -147,13 +148,13 @@ export const sendPasswordResetEmail = async (email: string, ipAddress?: string, 
   }
 
   // create reset link
-  const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  const resetLink = `${env.client.url}/reset-password?token=${token}`;
 
   logger.info('sending password reset email', { userId: user.id, email });
 
   // send email
   await transporter.sendMail({
-    from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
+    from: `"${env.email.from.name}" <${env.email.from.email}>`,
     to: email,
     subject: 'reset your password',
     html: passwordResetEmailTemplate(resetLink, user.email.split('@')[0]),
@@ -242,7 +243,7 @@ export const resetPassword = async (token: string, newPassword: string, ipAddres
 
   // create audit log in auth-service
   try {
-    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8000';
+    const authServiceUrl = env.services.authServiceUrl;
     await fetch(`${authServiceUrl}/auth/internal/audit-log`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -339,7 +340,7 @@ export const sendMagicLinkEmail = async (
     });
 
     // create magic link
-    const magicLink = `${process.env.CLIENT_URL}/magic-login?token=${token}`;
+    const magicLink = `${env.client.url}/magic-login?token=${token}`;
 
     logger.info('sending magic link email', { userId, email, isNewUser });
 
@@ -350,7 +351,7 @@ export const sendMagicLinkEmail = async (
 
     // send email
     await transporter.sendMail({
-      from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
+      from: `"${env.email.from.name}" <${env.email.from.email}>`,
       to: email,
       subject,
       html: magicLinkEmailTemplate(magicLink, email.split('@')[0], isNewUser),

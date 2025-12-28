@@ -1,8 +1,9 @@
+import env from "../config/env";
 import { PrismaClient } from "../generated/prisma";
 import logger from "./logger";
 
 // ensure database url is defined
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = env.database.url;
 if (!databaseUrl) {
   logger.error('DATABASE_URL environment variable is not defined');
   throw new Error('DATABASE_URL environment variable is not defined');
@@ -12,7 +13,7 @@ if (!databaseUrl) {
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 const prisma = globalForPrisma.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  log: env.isDevelopment ? ['query', 'error', 'warn'] : ['error'],
   datasources: {
     db: {
       url: databaseUrl,
@@ -21,7 +22,7 @@ const prisma = globalForPrisma.prisma || new PrismaClient({
 });
 
 // store instance globally in development to prevent hot-reload issues
-if (process.env.NODE_ENV !== 'production') {
+if (!env.isProduction) {
   globalForPrisma.prisma = prisma;
 }
 

@@ -1,6 +1,7 @@
 import winston from 'winston';
 import path from 'path';
 import fs from 'fs';
+import { env } from '../config/env';
 
 // ensure logs directory exists
 const logsDir = path.join(process.cwd(), 'logs');
@@ -31,7 +32,7 @@ const consoleFormat = winston.format.combine(
 
 // create winston logger
 const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: env.logging.level,
   format: logFormat,
   defaultMeta: { service: 'email-service' },
   transports: [
@@ -67,7 +68,7 @@ const logger = winston.createLogger({
 });
 
 // add console transport in development
-if (process.env.NODE_ENV !== 'production') {
+if (env.isDevelopment) {
   logger.add(new winston.transports.Console({
     format: consoleFormat,
   }));

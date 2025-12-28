@@ -1,8 +1,6 @@
 import 'dotenv/config';
 
-import { initSentry } from './src/config/sentry';
-initSentry();
-
+import { initSentry, captureException } from './src/config/sentry';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -13,15 +11,17 @@ import { sanitizeInput } from './src/middlewares/sanitize';
 import { apiRateLimiter } from './src/middlewares/rateLimiter';
 import logger, { morganStream } from './src/utils/logger';
 import { requestLogger } from './src/utils/requestLogger';
-import { captureException } from './src/config/sentry';
+import env from './src/config/env';
+
+initSentry();
 
 const app = express();
 
-// trust proxy
+// trust proxy (required for https redirection behind reverse proxy)
 app.set('trust proxy', 1);
 
-// enforce https in production
-if (process.env.NODE_ENV === 'production') {
+/* ------------------------------- HTTPS ENFORCE ------------------------------- */
+if (env.isProduction) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.header('x-forwarded-proto') !== 'https') {
       logger.warn('redirecting http to https', {
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// security headers with helmet
+/* ------------------------------- SECURITY HEADERS ---------------------------- */
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -55,58 +55,47 @@ app.use(
       includeSubDomains: true,
       preload: true,
     },
-    frameguard: {
-      action: 'deny',
-    },
+    frameguard: { action: 'deny' },
     noSniff: true,
     xssFilter: true,
   })
 );
 
-// logging middleware with winston
+/* -------------------------------- LOGGING ----------------------------------- */
 app.use(morgan('combined', { stream: morganStream }));
-
-// custom request logger
 app.use(requestLogger);
 
-// compression middleware
+/* --------------------------------- MIDDLEWARES ------------------------------- */
 app.use(compression());
-
-// json middleware with size limit
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-
-// input sanitization
 app.use(sanitizeInput);
 
-// cors configuration
+/* ----------------------------------- CORS ------------------------------------ */
 const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
-  process.env.AUTH_SERVICE_URL || 'http://localhost:8000',
+  env.client.url,
+  env.services.authServiceUrl,
+  ...env.cors.allowedOrigins,
 ];
 
-if (process.env.ALLOWED_ORIGINS) {
-  allowedOrigins.push(
-    ...process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-  );
-}
+const uniqueAllowedOrigins = [...new Set(allowedOrigins)];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin
-      if (!origin) {
-        return callback(null, true);
-      }
+      if (!origin) return callback(null, true); 
 
-      if (allowedOrigins.includes(origin)) {
+      if (uniqueAllowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
       logger.warn('cors policy blocked request', { origin });
-      const msg =
-        'the cors policy for this site does not allow access from the specified origin.';
-      return callback(new Error(msg), false);
+      return callback(
+        new Error(
+          'the cors policy for this site does not allow access from the specified origin.'
+        ),
+        false
+      );
     },
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS'],
@@ -117,13 +106,12 @@ app.use(
   })
 );
 
-// disable x-powered-by header
 app.disable('x-powered-by');
 
-// rate limiting middleware
+/* -------------------------------- RATE LIMITER ------------------------------- */
 app.use(apiRateLimiter);
 
-// routes
+/* ----------------------------------- ROUTES ---------------------------------- */
 app.use('/email', emailRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
@@ -135,22 +123,22 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
-// 404 handler
+/* ---------------------------------- 404 HANDLER ------------------------------ */
 app.use((req: Request, res: Response) => {
   logger.warn('endpoint not found', {
     path: req.originalUrl,
     method: req.method,
     ip: req.ip,
   });
+
   res.status(404).json({
     message: 'endpoint not found',
     path: req.originalUrl,
   });
 });
 
-// global error handler
+/* ------------------------------- GLOBAL ERROR HANDLER ------------------------ */
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-  // log error
   logger.error('global error handler', {
     error: err.message,
     stack: err.stack,
@@ -159,7 +147,6 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     ip: req.ip,
   });
 
-  // send error to sentry 
   if (process.env.SENTRY_ENABLED === 'true') {
     captureException(err, {
       url: req.url,
@@ -168,10 +155,9 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     });
   }
 
-  // don't leak error details in production
   const errorResponse = {
     message: err.message || 'internal server error',
-    ...(process.env.NODE_ENV === 'development' && {
+    ...(env.isDevelopment && {
       stack: err.stack,
       error: err,
     }),
@@ -180,23 +166,20 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   res.status(err.status || 500).json(errorResponse);
 });
 
-const PORT = process.env.EMAIL_SERVICE_PORT || 8001;
-const HOST = process.env.HOST || 'localhost';
-
-app.listen(PORT, () => {
+/* ------------------------------- START SERVER -------------------------------- */
+app.listen(env.server.port, env.server.host, () => {
   logger.info('email service started', {
-    port: PORT,
-    host: HOST,
-    environment: process.env.NODE_ENV || 'development',
+    port: env.server.port,
+    host: env.server.host,
+    environment: env.nodeEnv,
     sentryEnabled: process.env.SENTRY_ENABLED === 'true',
   });
 });
 
-// graceful shutdown
+/* ------------------------------- GRACEFUL SHUTDOWN --------------------------- */
 const gracefulShutdown = () => {
   logger.info('received shutdown signal, closing server gracefully');
-  
-  // close sentry and wait for events to flush
+
   if (process.env.SENTRY_ENABLED === 'true') {
     const Sentry = require('./src/config/sentry').default;
     Sentry.close(2000).then(() => {
