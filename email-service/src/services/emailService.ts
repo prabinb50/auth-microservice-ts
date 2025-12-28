@@ -31,7 +31,7 @@ export const sendVerificationEmail = async (userId: string, email: string) => {
 
   // send email
   await transporter.sendMail({
-    from: `"Auth Service" <${process.env.EMAIL_USER}>`,
+    from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'verify your email address',
     html: verificationEmailTemplate(verificationLink, email.split('@')[0]),
@@ -153,7 +153,7 @@ export const sendPasswordResetEmail = async (email: string, ipAddress?: string, 
 
   // send email
   await transporter.sendMail({
-    from: `"Auth Service" <${process.env.EMAIL_USER}>`,
+    from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'reset your password',
     html: passwordResetEmailTemplate(resetLink, user.email.split('@')[0]),
@@ -350,7 +350,7 @@ export const sendMagicLinkEmail = async (
 
     // send email
     await transporter.sendMail({
-      from: `"Auth Service" <${process.env.EMAIL_USER}>`,
+      from: `"FUSOBOTICS RECRUITMENT" <${process.env.EMAIL_USER}>`,
       to: email,
       subject,
       html: magicLinkEmailTemplate(magicLink, email.split('@')[0], isNewUser),
