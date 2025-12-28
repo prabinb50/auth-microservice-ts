@@ -18,6 +18,7 @@ import {
   logUserDeleted,
   logUsersBulkDeleted,
 } from "./auditService";
+import env from "../config/env";
 
 // constants for account locking
 const MAX_FAILED_ATTEMPTS = 5;
@@ -50,7 +51,7 @@ export const registerUser = async (email: string, password: string, role: UserRo
 
     // call email service to send verification email
     try {
-        const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:8001';
+        const emailServiceUrl = env.services.emailServiceUrl;
         const response = await fetch(`${emailServiceUrl}/email/send-verification`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

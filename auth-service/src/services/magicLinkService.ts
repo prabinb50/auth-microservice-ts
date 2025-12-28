@@ -7,6 +7,7 @@ import { createSession } from './sessionService';
 import { createAuditLog } from './auditService';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import env from '../config/env';
 
 // helper function to get ip address
 const getIpAddress = (req: Request): string => {
@@ -133,7 +134,7 @@ export const requestMagicLink = async (email: string, req: Request) => {
     logger.info('deleted old unused magic link tokens', { userId: user.id });
 
     // call email service to generate and send magic link
-    const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:3000';
+    const emailServiceUrl = env.services.emailServiceUrl;
 
     const response = await fetch(`${emailServiceUrl}/email/send-magic-link`, {
       method: 'POST',

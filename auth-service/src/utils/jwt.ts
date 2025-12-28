@@ -1,13 +1,14 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { TokenPayload, UserRole } from "./customTypes";
+import env from "../config/env";
 
 // secrets for access and refresh tokens
-const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
+const ACCESS_SECRET = env.jwt.accessSecret;
+const REFRESH_SECRET = env.jwt.refreshSecret;
 
 // token expiry durations
-const ACCESS_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES || "15m";
-const REFRESH_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES || "7d";
+const ACCESS_EXPIRES = env.jwt.accessTokenExpiry;
+const REFRESH_EXPIRES = env.jwt.refreshTokenExpiry;
 
 if (!ACCESS_SECRET || !REFRESH_SECRET) {
     throw new Error("missing jwt access or refresh secrets in environment variables");
@@ -47,7 +48,7 @@ export const verifyRefreshToken = (token: string): TokenPayload => {
 
 // get refresh token expiry date as Date
 export const getRefreshTokenExpiryDate = (): Date => {
-    const val = process.env.REFRESH_TOKEN_EXPIRES || "7d";
+    const val = REFRESH_EXPIRES;
     const num = parseInt(val.replace(/\D/g, ""), 10) || 7;
     
     if (val.includes("d")) {

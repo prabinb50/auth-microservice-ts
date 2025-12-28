@@ -2,6 +2,7 @@ import prisma from '../utils/prisma';
 import logger from '../utils/logger';
 import { Request } from 'express';
 import { createAuditLog } from './auditService';
+import { env } from '../config/env';
 
 // interface for user consent
 interface UserConsent {
@@ -124,7 +125,7 @@ export const exportUserData = async (userId: string, req: Request): Promise<Gdpr
       consents: null, // will be implemented when consent table is added
       refreshTokens,
       exportDate: new Date(),
-      retentionPeriod: process.env.AUDIT_LOG_RETENTION_DAYS || '90 days',
+      retentionPeriod: `${env.audit.retentionDays} days`,
     };
 
     // log data export
@@ -376,7 +377,7 @@ export const updateUserEmail = async (
 
     // call email service to send verification email for new address
     try {
-      const emailServiceUrl = process.env.EMAIL_SERVICE_URL || 'http://localhost:8001';
+      const emailServiceUrl = env.services.emailServiceUrl;
       
       logger.info('calling email service to send verification', {
         userId,
@@ -456,7 +457,7 @@ export const getDataRetentionInfo = async (userId: string) => {
       throw new Error('user not found');
     }
 
-    const retentionDays = parseInt(process.env.AUDIT_LOG_RETENTION_DAYS || '90');
+    const retentionDays = env.audit.retentionDays;
     const auditLogCutoff = new Date();
     auditLogCutoff.setDate(auditLogCutoff.getDate() - retentionDays);
 

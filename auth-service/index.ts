@@ -15,6 +15,7 @@ import { apiRateLimiter } from './src/middlewares/loginRateLimiter';
 import logger, { morganStream } from './src/utils/logger';
 import { requestLogger } from './src/utils/requestLogger';
 import { captureException } from './src/config/sentry';
+import env from './src/config/env';
 
 // configure the server
 const app = express();
@@ -23,7 +24,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 // enforce https in production
-if (process.env.NODE_ENV === 'production') {
+if (env.isProduction) {
   app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.header('x-forwarded-proto') !== 'https') {
       logger.warn('redirecting http to https', {
@@ -84,11 +85,6 @@ app.use(sanitizeInput);
 // middleware for cookies
 app.use(cookieParser());
 
-// cors configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim())
-  : ['http://localhost:5173'];
-
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -97,7 +93,7 @@ app.use(
         return callback(null, true);
       }
 
-      if (allowedOrigins.includes(origin)) {
+      if (env.cors.allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
@@ -172,7 +168,7 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   // don't leak error details in production
   const errorResponse = {
     message: err.message || 'internal server error',
-    ...(process.env.NODE_ENV === 'development' && {
+    ...(env.isDevelopment && {
       stack: err.stack,
       error: err,
     }),
@@ -181,14 +177,11 @@ app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
   res.status(err.status || 500).json(errorResponse);
 });
 
-const PORT = process.env.PORT || 8000;
-const HOST = process.env.HOST || 'localhost';
-
-app.listen(PORT, () => {
+app.listen(env.server.port, () => {
   logger.info('auth service started', {
-    port: PORT,
-    host: HOST,
-    environment: process.env.NODE_ENV || 'development',
+    port: env.server.port,
+    host: env.server.host,
+    environment: env.nodeEnv,
     sentryEnabled: process.env.SENTRY_ENABLED === 'true',
   });
 });

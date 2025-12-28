@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/node';
 import logger from '../utils/logger';
+import env from './env';
 
 // check if sentry is enabled
 const isSentryEnabled = process.env.SENTRY_ENABLED === 'true' && !!process.env.SENTRY_DSN;
@@ -11,7 +12,7 @@ export const initSentry = () => {
     return;
   }
 
-  const dsn = process.env.SENTRY_DSN;
+  const dsn = env.sentry.dsn;
   if (!dsn) {
     logger.warn('sentry dsn not configured');
     return;
@@ -20,11 +21,11 @@ export const initSentry = () => {
   try {
     Sentry.init({
       dsn: dsn, 
-      environment: process.env.SENTRY_ENVIRONMENT || 'development',
+      environment: env.sentry.environment,
 
       // performance & profiling 
-      tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || '1.0'),
-      profilesSampleRate: parseFloat(process.env.SENTRY_PROFILES_SAMPLE_RATE || '1.0'),
+      tracesSampleRate: env.sentry.tracesSampleRate,
+      profilesSampleRate: env.sentry.profilesSampleRate,
 
       // sanitize sensitive data
       beforeSend(event) {
@@ -74,9 +75,9 @@ export const initSentry = () => {
     });
 
     logger.info('sentry initialized successfully', {
-      environment: process.env.SENTRY_ENVIRONMENT,
-      tracesSampleRate: process.env.SENTRY_TRACES_SAMPLE_RATE,
-      profilesSampleRate: process.env.SENTRY_PROFILES_SAMPLE_RATE,
+      environment: env.sentry.environment,
+      tracesSampleRate: env.sentry.tracesSampleRate,
+      profilesSampleRate: env.sentry.profilesSampleRate,
     });
   } catch (error: any) {
     logger.error('failed to initialize sentry', { error: error.message });
